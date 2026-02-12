@@ -17,6 +17,9 @@ export function useSchema(): VbenFormSchema[] {
       component: 'ApiTreeSelect',
       componentProps: {
         allowClear: true,
+        placeholder: '请选择',
+        showSearch: true,
+        treeNodeFilterProp: 'label',
         api: getDeptTreeList,
         class: 'w-full',
         labelField: 'name',
