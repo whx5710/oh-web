@@ -21,7 +21,7 @@ export const defaultResponseInterceptor = ({
   return {
     fulfilled: (response) => {
       const { config, data: responseData, status } = response;
-
+      
       if (config.responseReturn === 'raw') {
         return response;
       }
@@ -59,9 +59,9 @@ export const authenticateResponseInterceptor = ({
 }): ResponseInterceptorConfig => {
   return {
     rejected: async (error) => {
-      const { config, response } = error;
+      const { config, data } = error;
       // 如果不是 401 错误，直接抛出异常
-      if (response?.status !== 401) {
+      if (data?.code !== 401) {
         throw error;
       }
       // 判断是否启用了 refreshToken 功能

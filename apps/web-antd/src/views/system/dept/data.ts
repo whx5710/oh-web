@@ -14,18 +14,6 @@ import { $t } from '#/locales';
 export function useSchema(): VbenFormSchema[] {
   return [
     {
-      component: 'Input',
-      fieldName: 'name',
-      label: $t('system.dept.deptName'),
-      rules: z
-        .string()
-        .min(2, $t('ui.formRules.minLength', [$t('system.dept.deptName'), 2]))
-        .max(
-          20,
-          $t('ui.formRules.maxLength', [$t('system.dept.deptName'), 20]),
-        ),
-    },
-    {
       component: 'ApiTreeSelect',
       componentProps: {
         allowClear: true,
@@ -37,6 +25,18 @@ export function useSchema(): VbenFormSchema[] {
       },
       fieldName: 'parentId',
       label: $t('system.dept.parentDept'),
+    },
+    {
+      component: 'Input',
+      fieldName: 'name',
+      label: $t('system.dept.deptName'),
+      rules: z
+        .string()
+        .min(2, $t('ui.formRules.minLength', [$t('system.dept.deptName'), 2]))
+        .max(
+          20,
+          $t('ui.formRules.maxLength', [$t('system.dept.deptName'), 20]),
+        ),
     },
     {
       component: 'InputNumber',

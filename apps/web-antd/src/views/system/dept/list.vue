@@ -156,25 +156,33 @@ function refreshGrid() {
 }
 
 const treeData = ref([]);
+const expandedParams = ref<string[]>([]) // 受控展开
+const expandedFlag = ref(true)
 // 加载树形单位信息
 const getDeptTree = (params: Recordable<any>) => {
   getDeptTreeList(params).then((data) => {
     const tmpData = reactive([] as any);
-    tmpData.push({
-      id: '0',
-      name: '全部',
-      children: data,
-    });
-    treeData.value = tmpData;
+    if(data.length === 0){
+      treeData.value = tmpData;
+    } else {
+      tmpData.push({
+        id: '0',
+        name: '全部',
+        children: data,
+      });
+      treeData.value = tmpData;
+    }
     generateList(treeData.value);
     setTimeout(() => {
-      // 展开-延迟执行
-      // deptTreeRef.value.expandNodes(['0']);
+      if(expandedFlag.value){
+        // 展开-延迟执行
+        expandedParams.value = ['0']
+      }
     }, 100);
   });
 };
 getDeptTree({});
-const deptTreeRef = ref();
+// const deptTreeRef = ref();
 // 点击左边树形列表，查询单位信息
 const getDeptById = (node: any) => {
   queryParam.value = { parentId: node.value.id };
@@ -194,8 +202,8 @@ const generateList = (data: any[]) => {
   }
 };
 // 获取上级部门ID
-let expandedKeys: Array<number | string> = [];
-const getParentKey = (id: number | string): number | string | undefined => {
+let expandedKeys: Array<string> = [];
+const getParentKey = (id:  string):  string | undefined => {
   let parentId;
   if (id) {
     expandedKeys.push(id);
@@ -211,7 +219,6 @@ const getParentKey = (id: number | string): number | string | undefined => {
   }
   return parentId;
 };
-
 watch(searchValue, (value) => {
   expandedKeys = [];
   dataList.forEach((item) => {
@@ -222,7 +229,8 @@ watch(searchValue, (value) => {
   searchValue.value = value;
   const params = [...new Set(expandedKeys)];
   getDeptTree({ deptIds: params });
-  deptTreeRef.value.expandNodes(params);
+  expandedParams.value = params
+  expandedFlag.value = false
 });
 </script>
 <template>
@@ -242,6 +250,7 @@ watch(searchValue, (value) => {
             :transition="false"
             value-field="id"
             label-field="name"
+            v-model:expanded="expandedParams"
             @select="getDeptById"
           >
             <template #node="item">
