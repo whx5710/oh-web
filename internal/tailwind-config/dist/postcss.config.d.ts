@@ -1,0 +1,2 @@
+export * from "/home/finn/data/workspace/oh-web/internal/tailwind-config/src/postcss.config.js";
+export { default } from "/home/finn/data/workspace/oh-web/internal/tailwind-config/src/postcss.config.js";
