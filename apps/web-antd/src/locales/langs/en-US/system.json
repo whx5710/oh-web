@@ -54,6 +54,7 @@
     "list": "Role List",
     "name": "Role",
     "roleName": "Role Name",
+    "roleCode": "Role Code",
     "id": "Role ID",
     "status": "Status",
     "remark": "Remark",

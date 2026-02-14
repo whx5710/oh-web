@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { DataNode } from 'ant-design-vue/es/tree';
-
+import type { VbenFormSchema } from '#/adapter/form';
 import type { Recordable } from '@vben/types';
 
 import type { SystemRoleApi } from '#/api/system/role';
@@ -23,8 +23,10 @@ const emits = defineEmits(['success']);
 
 const formData = ref<SystemRoleApi.SystemRole>();
 
+const schemaData: VbenFormSchema[] =  useFormSchema();
+
 const [Form, formApi] = useVbenForm({
-  schema: useFormSchema(),
+  schema: schemaData,
   showDefaultActions: false,
 });
 
@@ -52,6 +54,15 @@ const [Drawer, drawerApi] = useVbenDrawer({
       const data = drawerApi.getData<SystemRoleApi.SystemRole>();
       formApi.resetForm();
       if (data) {
+        if(data.isSystem === 1){
+          schemaData[1] = {
+            component: 'Input',
+            fieldName: 'code',
+            label: $t('system.role.roleCode'),
+            rules: 'required',
+            disabled: true
+          }
+        }
         formData.value = data;
         id.value = data.id;
         formApi.setValues(data);
@@ -100,12 +111,13 @@ function getNodeClass(node: Recordable<any>) {
     <Form>
       <template #menuIdList="slotProps">
         <Spin :spinning="loadingPermissions" wrapper-class-name="w-full">
-          <!-- 不能勾选复选框，暂时去掉 :default-expanded-level="2" -->
+          <!-- 不能勾选复选框，去掉 :default-expanded-level="2" -->
           <Tree
             :tree-data="menuIdList"
             multiple
             bordered
             :get-node-class="getNodeClass"
+            :default-expanded-level="2" 
             v-bind="slotProps"
             value-field="id"
             label-field="meta.title"

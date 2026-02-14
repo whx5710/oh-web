@@ -13,6 +13,12 @@ export function useFormSchema(): VbenFormSchema[] {
       rules: 'required',
     },
     {
+      component: 'Input',
+      fieldName: 'code',
+      label: $t('system.role.roleCode'),
+      rules: 'required',
+    },
+    {
       component: 'Textarea',
       fieldName: 'remark',
       label: $t('system.role.remark'),

@@ -8,6 +8,7 @@ export namespace SystemRoleApi {
     [key: string]: any;
     id: string;
     name: string;
+    code: string;
     menuIdList: string[];
     remark?: string;
     status: 0 | 1;
