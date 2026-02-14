@@ -72,6 +72,11 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
       width: 200,
     },
     {
+      field: 'code',
+      minWidth: 100,
+      title: $t('system.role.roleCode'),
+    },
+    {
       cellRender: {
         name: 'CellTag',
         options: [
@@ -80,8 +85,8 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
         ],
       },
       field: 'isSystem',
-      minWidth: 100,
-      title: '是否内置角色',
+      width: 80,
+      title: '内置角色',
     },
     {
       field: 'tenantId',
