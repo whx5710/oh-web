@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { VbenFormSchema } from '#/adapter/form';
 import type { SystemTenantApi } from '#/api/system/tenant';
 
 import { computed, ref } from 'vue';
@@ -21,12 +22,14 @@ const getTitle = computed(() => {
     : $t('ui.actionTitle.create', ['租户']);
 });
 
+const schemaData: VbenFormSchema[] =  useSchema();
+
 const [Form, formApi] = useVbenForm({
   // 垂直布局，label和input在不同行，值为vertical
   // 水平布局，label和input在同一行
   layout: 'horizontal',
   // layout: 'vertical',
-  schema: useSchema(),
+  schema: schemaData,
   showDefaultActions: false,
 });
 
@@ -60,6 +63,14 @@ const [Modal, modalApi] = useVbenModal({
           data.parentId = undefined;
         }
         formData.value = data;
+        if(formData.value?.id){
+          schemaData[0] = {
+            component: 'Input',
+            fieldName: 'tenantId',
+            label: '租户编码',
+            disabled: true
+          }
+        }
         formApi.setValues(formData.value);
       }
     }

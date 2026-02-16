@@ -1,6 +1,7 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemTenantApi } from '#/api/system/tenant';
+import { getDeptTreeList } from '#/api/system/dept';
 
 /**
  * 获取编辑表单的字段配置。如果没有使用多语言，可以直接export一个数组常量
@@ -17,6 +18,22 @@ export function useSchema(): VbenFormSchema[] {
       component: 'Input',
       fieldName: 'tenantName',
       label: '租户名称',
+    },
+    {
+      component: 'ApiTreeSelect',
+      componentProps: {
+        allowClear: true,
+        placeholder: '请选择',
+        showSearch: true,
+        treeNodeFilterProp: 'label',
+        api: getDeptTreeList,
+        class: 'w-full',
+        labelField: 'name',
+        valueField: 'id',
+        childrenField: 'children',
+      },
+      fieldName: 'deptId',
+      label: '根部门',
     },
     {
       component: 'RadioGroup',
