@@ -13,12 +13,11 @@ import { useVbenModal } from '@vben/common-ui';
 import { message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getUserPage, tenantUser } from '#/api/system/user';
+import { getUserPage, bindTenantUser } from '#/api/system/user';
 
 import { useCheckUserColumns } from '../data';
 
 const emit = defineEmits(['success']);
-const userGridRef = ref();
 const userMap = new Map();
 const tenantId = ref('');
 
@@ -33,7 +32,7 @@ const [Modal, modalApi] = useVbenModal({
         userIds.push(key);
       });
       if (tenantId.value) {
-        tenantUser(tenantId.value, 1, userIds)
+        bindTenantUser(tenantId.value, userIds)
           .then(() => {
             message.success('操作成功');
             emit('success');

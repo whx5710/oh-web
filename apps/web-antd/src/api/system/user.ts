@@ -88,19 +88,24 @@ export async function getUserPage(params: Recordable<any>) {
 }
 
 /**
- * 绑定/解绑租户的管理用户
+ * 绑定租户的管理用户
  * @param tenantId 租户ID
- * @param flag 标识 1 绑定 2 解绑
- * @param userIdList 用户ID列表
  */
-export async function tenantUser(
-  tenantId: string,
-  flag: number,
-  userIdList: string[],
-) {
+export async function bindTenantUser(tenantId: string, userIdList: string[]) {
   return requestClient.post(
-    `/${sysApi}/sys/user/tenantUser/${tenantId}/${flag}`,
-    userIdList,
+    `/${sysApi}/sys/user/bindTenantUser/${tenantId}`,
+    userIdList
+  );
+}
+
+/**
+ * 解绑租户的管理用户
+ * @param tenantId 租户ID
+ */
+export async function unBindTenantUser(tenantId: string, userIdList: string[]) {
+  return requestClient.post(
+    `/${sysApi}/sys/user/unBindTenantUser/${tenantId}`,
+    userIdList
   );
 }
 

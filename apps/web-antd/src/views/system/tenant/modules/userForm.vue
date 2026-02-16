@@ -13,7 +13,7 @@ import { Plus } from '@vben/icons';
 import { Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getUserPage, tenantUser } from '#/api/system/user';
+import { getUserPage, unBindTenantUser } from '#/api/system/user';
 import { $t } from '#/locales';
 
 import { useUserColumns } from '../data';
@@ -45,7 +45,7 @@ function onDataDelete(row: SystemUserApi.SystemUser) {
     duration: 0,
     key: 'action_process_msg',
   });
-  tenantUser(row.tenantId, 2, [row.id])
+  unBindTenantUser(row.tenantId, [row.id])
     .then(() => {
       message.success({
         content: `用户${row.realName}解绑成功`,
