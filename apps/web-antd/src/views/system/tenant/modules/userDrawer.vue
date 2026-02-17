@@ -4,6 +4,7 @@ import type {
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
 import type { SystemUserApi } from '#/api/system/user';
+import type { SystemTenantApi } from '#/api/system/tenant';
 
 import { ref } from 'vue';
 
@@ -16,7 +17,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getUserPage, unBindTenantUser } from '#/api/system/user';
 import { $t } from '#/locales';
 
-import { useUserColumns } from '../data';
+import { useUserColumns, userSchema } from '../data';
 import ModalUserForm from './modalUserForm.vue';
 /**
  * 数据字典-数据列表（抽屉）。
@@ -27,6 +28,7 @@ const [FormModal, formModalApi] = useVbenModal({
 });
 
 const tenantId = ref();
+const title = ref('')
 // drawerApi
 const [Drawer, drawerApi] = useVbenDrawer({
   showConfirmButton: false,
@@ -34,8 +36,9 @@ const [Drawer, drawerApi] = useVbenDrawer({
     console.warn('------------------onConfirm');
   },
   onOpenChange() {
-    const data = drawerApi.getData<SystemUserApi.SystemUser>();
+    const data = drawerApi.getData<SystemTenantApi.SystemTenant>();
     tenantId.value = data.tenantId;
+    title.value = '租户用户-' + data.tenantName;
   },
 });
 // 删除数据
@@ -60,6 +63,12 @@ function onDataDelete(row: SystemUserApi.SystemUser) {
 
 // gridApi 租户用户
 const [Grid, gridApi] = useVbenVxeGrid({
+  showSearchForm: false, // 默认隐藏搜索表单
+  formOptions: {
+    schema: userSchema(),
+    submitOnChange: true,
+    showCollapseButton: false, // 是否显示展开/折叠
+  },
   gridOptions: {
     columns: useUserColumns(onActionClick),
     height: 'auto',
@@ -80,11 +89,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
       keyField: 'id',
       isCurrent: true, // 高亮选中行
     },
-
     toolbarConfig: {
       custom: true,
       export: false,
-      refresh: { code: 'query' },
+      refresh: true,
+      refreshOptions: { code: 'query' },
       search: true,
       zoom: true,
     },
@@ -109,9 +118,9 @@ function onCreate() {
 }
 </script>
 <template>
-  <Drawer class="w-full max-w-[1000px]" title="维护租户用户">
+  <Drawer class="w-full max-w-[1000px]" :title="title" >
     <FormModal @success="onRefresh" />
-    <Grid table-title="租户用户列表">
+    <Grid>
       <template #toolbar-tools>
         <Button type="primary" @click="onCreate">
           <Plus class="size-5" />

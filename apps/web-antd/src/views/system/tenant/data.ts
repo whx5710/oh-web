@@ -94,6 +94,20 @@ export function useGridFormSchema(): VbenFormSchema[] {
   ];
 }
 
+// 搜索表单
+export function userSchema(): VbenFormSchema[] {
+  return [
+    {
+      component: 'Input',
+      fieldName: 'keyWord',
+      label: '关键字搜索',
+      componentProps: {
+        allowClear: true,
+      },
+    }
+  ];
+}
+
 export function useColumns<T = SystemTenantApi.SystemTenant>(
   onActionClick: OnActionClickFn<T>,
   // onStatusChange?: (newStatus: any, row: T) => PromiseLike<boolean | undefined>,

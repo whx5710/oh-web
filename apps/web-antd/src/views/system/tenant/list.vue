@@ -16,7 +16,7 @@ import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
-import UserForm from './modules/userForm.vue';
+import UserDrawer from './modules/userDrawer.vue';
 
 const [FormModal, formModalApi] = useVbenModal({
   connectedComponent: Form,
@@ -24,7 +24,7 @@ const [FormModal, formModalApi] = useVbenModal({
 });
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
-  connectedComponent: UserForm,
+  connectedComponent: UserDrawer,
   destroyOnClose: true,
 });
 
@@ -55,7 +55,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
       keyField: 'id',
       isCurrent: true, // 高亮选中行
     },
-
     toolbarConfig: {
       custom: true,
       export: false,
@@ -84,7 +83,6 @@ function onActionClick(e: OnActionClickParams<SystemTenantApi.SystemTenant>) {
   }
 }
 function onEditUser(row: SystemTenantApi.SystemTenant) {
-  console.warn(row);
   formDrawerApi.setData(row).open();
 }
 function onEdit(row: SystemTenantApi.SystemTenant) {
@@ -119,7 +117,7 @@ function onCreate() {
 }
 </script>
 <template>
-  <Page auto-content-height title="租户管理" description="这是描述信息">
+  <Page auto-content-height >
     <FormModal @success="onRefresh" />
     <!-- 抽屉-->
     <FormDrawer @success="onRefresh" />
