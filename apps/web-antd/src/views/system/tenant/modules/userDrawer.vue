@@ -6,26 +6,18 @@ import type {
 import type { SystemUserApi } from '#/api/system/user';
 import type { SystemTenantApi } from '#/api/system/tenant';
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-import { useVbenDrawer, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { useVbenDrawer } from '@vben/common-ui';
+// import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { Input, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getUserPage, unBindTenantUser } from '#/api/system/user';
 import { $t } from '#/locales';
 
 import { useUserColumns, userSchema } from '../data';
-import ModalUserForm from './modalUserForm.vue';
-/**
- * 数据字典-数据列表（抽屉）。
- */
-const [FormModal, formModalApi] = useVbenModal({
-  connectedComponent: ModalUserForm,
-  destroyOnClose: true,
-});
 
 const tenantId = ref();
 const title = ref('')
@@ -112,20 +104,24 @@ function onActionClick(e: OnActionClickParams<SystemUserApi.SystemUser>) {
     }
   }
 }
-
-function onCreate() {
-  formModalApi.setData({ tenantId: tenantId.value }).open();
+const keyWord = ref('')
+watch(keyWord, () => {
+  onSearch()
+  // useDebounceFn(onSearch , 3)
+});
+const onSearch = () => {
+  gridApi.query({keyWord: keyWord.value})
+  // useDebounceFn(() => {
+  //   console.warn('---vvvv-----', keyWord.value)
+  // } , 300)
 }
+
 </script>
 <template>
   <Drawer class="w-full max-w-[1000px]" :title="title" >
-    <FormModal @success="onRefresh" />
     <Grid>
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
-          <Plus class="size-5" />
-          新增
-        </Button>
+        <Input style="width: 200px;" v-model:value="keyWord" placeholder="关键字搜索" allowClear/>
       </template>
     </Grid>
   </Drawer>
