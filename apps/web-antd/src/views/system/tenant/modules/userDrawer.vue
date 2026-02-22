@@ -8,16 +8,17 @@ import type { SystemTenantApi } from '#/api/system/tenant';
 
 import { ref, watch } from 'vue';
 
-import { useVbenDrawer } from '@vben/common-ui';
+import { useVbenDrawer, useVbenModal } from '@vben/common-ui';
 // import { Plus } from '@vben/icons';
 
-import { Input, message } from 'ant-design-vue';
+import { Button, Divider, Input, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getUserPage, unBindTenantUser } from '#/api/system/user';
 import { $t } from '#/locales';
 
 import { useUserColumns, userSchema } from '../data';
+import ModalUserForm from './modalUserForm.vue';
 
 const tenantId = ref();
 const title = ref('')
@@ -116,11 +117,25 @@ const onSearch = () => {
   // } , 300)
 }
 
+const [FormModal, formModalApi] = useVbenModal({
+  connectedComponent: ModalUserForm,
+  destroyOnClose: true,
+});
+
+function onAdd() {
+  formModalApi.setData({ tenantId: tenantId.value }).open();
+}
+
 </script>
 <template>
   <Drawer class="w-full max-w-[1000px]" :title="title" >
+    <FormModal @success="onRefresh" />
     <Grid>
       <template #toolbar-tools>
+        <Button type="primary" @click="onAdd">
+          添加
+        </Button>
+        <Divider type="vertical" />
         <Input style="width: 200px;" v-model:value="keyWord" placeholder="关键字搜索" allowClear/>
       </template>
     </Grid>
