@@ -131,8 +131,6 @@ catalog:
   lodash.clonedeep: ^4.5.0
   lucide-vue-next: ^0.553.0
   medium-zoom: ^1.1.0
-  naive-ui: ^2.43.2
-  nitropack: ^2.13.1
   nprogress: ^0.2.0
   ora: ^8.2.0
   pinia: ^3.0.4
