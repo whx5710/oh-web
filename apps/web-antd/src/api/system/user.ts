@@ -88,6 +88,18 @@ export async function getUserPage(params: Recordable<any>) {
 }
 
 /**
+ * 获取用户列表数据
+ */
+export async function pageByRole(params: Recordable<any>) {
+  return requestClient.get<Array<SystemUserApi.SystemUser>>(
+    `/${sysApi}/sys/user/pageByRole`,
+    {
+      params,
+    },
+  );
+}
+
+/**
  * 绑定租户的管理用户
  * @param tenantId 租户ID
  */

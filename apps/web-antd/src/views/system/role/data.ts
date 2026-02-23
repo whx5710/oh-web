@@ -1,6 +1,7 @@
 import type { VbenFormSchema } from '#/adapter/form';
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { SystemRoleApi } from '#/api/system/role';
+import type { SystemTenantApi } from '#/api/system/tenant';
 
 import { $t } from '#/locales';
 
@@ -125,12 +126,82 @@ export function useColumns<T = SystemRoleApi.SystemRole>(
               return !!(row.isSystem === 1);
             },
           },
+          {
+            text: '查看用户',
+            code: 'viewUser' // 查看用户
+          },
         ],
       },
       field: 'operation',
       fixed: 'right',
       title: $t('system.role.operation'),
-      width: 130,
+      width: 180,
+    },
+  ];
+}
+
+// 数据表格
+export function useUserColumns<T = SystemTenantApi.SystemTenant>(
+  onActionClick: OnActionClickFn<T>,
+  // onStatusChange?: (newStatus: any, row: T) => PromiseLike<boolean | undefined>,
+): VxeTableGridOptions['columns'] {
+  return [
+    { title: '序号', type: 'seq', width: 50 },
+    {
+      align: 'left',
+      field: 'username',
+      title: '用户名',
+      width: 120,
+    },
+    {
+      align: 'left',
+      field: 'realName',
+      title: '姓名',
+      width: 120,
+    },
+    {
+      align: 'left',
+      field: 'mobile',
+      title: '手机号',
+      width: 120,
+    },
+    {
+      align: 'left',
+      field: 'gender',
+      title: '性别',
+      width: 55,
+      cellRender: {
+        name: 'CellTag',
+        options: [
+          { color: 'warning', label: '男', value: 0 },
+          { color: 'success', label: '女', value: 1 },
+          { color: 'error', label: '未知', value: 2 },
+        ],
+      },
+    },
+    {
+      align: 'left',
+      field: 'email',
+      title: '邮箱',
+      width: 150,
+    },
+    {
+      align: 'left',
+      field: 'status',
+      title: '状态',
+      width: 50,
+      cellRender: {
+        name: 'CellTag',
+        options: [
+          { color: 'warning', label: '停用', value: 0 },
+          { color: 'success', label: '正常', value: 1 },
+        ],
+      },
+    },
+    {
+      align: 'left',
+      field: 'tenantName',
+      title: '租户',
     },
   ];
 }

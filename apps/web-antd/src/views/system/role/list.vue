@@ -16,9 +16,15 @@ import { $t } from '#/locales';
 
 import { useColumns, useGridFormSchema } from './data';
 import Form from './modules/form.vue';
+import UserDrawer from './modules/userDrawer.vue';
 
 const [FormDrawer, formDrawerApi] = useVbenDrawer({
   connectedComponent: Form,
+  destroyOnClose: true,
+});
+// 用户
+const [FormDrawerUser, formDrawerUserApi] = useVbenDrawer({
+  connectedComponent: UserDrawer,
   destroyOnClose: true,
 });
 
@@ -68,6 +74,10 @@ function onActionClick(e: OnActionClickParams<SystemRoleApi.SystemRole>) {
     }
     case 'edit': {
       onEdit(e.row);
+      break;
+    }
+    case 'viewUser': {
+      onViewUser(e.row);
       break;
     }
   }
@@ -122,7 +132,10 @@ function onActionClick(e: OnActionClickParams<SystemRoleApi.SystemRole>) {
 function onEdit(row: SystemRoleApi.SystemRole) {
   formDrawerApi.setData(row).open();
 }
-
+// 查看用户
+function onViewUser(row: SystemRoleApi.SystemRole) {
+  formDrawerUserApi.setData(row).open();
+}
 function onDelete(row: SystemRoleApi.SystemRole) {
   if (row.isSystem === 1) {
     message.warning({
@@ -159,6 +172,7 @@ function onCreate() {
 <template>
   <Page auto-content-height>
     <FormDrawer @success="onRefresh" />
+    <FormDrawerUser @success="onRefresh" />
     <Grid :table-title="$t('system.role.list')">
       <template #operation="{ row }">
         {{ row }}

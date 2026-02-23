@@ -57,6 +57,7 @@ const [Form, formApi] = useVbenForm({
             pageNum: 1,
             pageSize: 20,
             keyWord: keyword.value || undefined,
+            tenantRole: true, // 有租户角色的
             tenantFlag: 0 // 未绑定租户的用户
           },
           showSearch: true,
@@ -70,6 +71,7 @@ const [Form, formApi] = useVbenForm({
       fieldName: 'keyWord',
       // 界面显示的label
       label: '关键字搜索',
+      help: '一般只添加初始的管理用户',
       renderComponentContent: () => {
         return {
           notFoundContent: fetching.value ? h(Spin) : undefined,
