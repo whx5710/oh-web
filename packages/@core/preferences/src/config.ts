@@ -21,7 +21,7 @@ const defaultPreferences: Preferences = {
     dynamicTitle: true,
     enableCheckUpdates: true,
     enablePreferences: true,
-    enableRefreshToken: false,
+    enableRefreshToken: true, // 是否开启刷新token
     enableStickyPreferencesNavigationBar: true,
     isMobile: false,
     layout: 'sidebar-nav',
