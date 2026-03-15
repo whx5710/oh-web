@@ -53,7 +53,7 @@ export function useGridFormSchema(): VbenFormSchema[] {
           },
           api: fetchRemoteOptions,
           allowClear: true,
-          disabled: userStore.userInfo?.tenantId !== undefined,
+          disabled: userStore.userInfo?.superAdmin !== 1,
           // 禁止本地过滤
           filterOption: false,
           // 如果正在获取数据，使用插槽显示一个loading
