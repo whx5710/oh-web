@@ -142,6 +142,13 @@ const handleFileUpload = (event: Event) => {
   reader.readAsText(file);
 };
 
+// 创建新流程
+const createNewProcess = () => {
+  if (confirm('确定要创建新流程吗？当前未保存的更改将会丢失。')) {
+    createDefaultProcess();
+  }
+};
+
 onMounted(() => {
   initModeler();
 });
@@ -158,6 +165,9 @@ onUnmounted(() => {
     <div class="bpmn-header">
       <h2>流程设计器</h2>
       <div class="bpmn-actions">
+        <button class="ant-btn" @click="createNewProcess">
+          新建流程
+        </button>
         <input
           type="file"
           accept=".bpmn"
@@ -165,13 +175,13 @@ onUnmounted(() => {
           style="display: none"
           id="bpmn-upload"
         />
-        <label for="bpmn-upload" class="ant-btn ant-btn-primary">
-          导入流程
+        <label for="bpmn-upload" class="ant-btn">
+          打开流程
         </label>
-        <button class="ant-btn ant-btn-success" @click="exportModel">
-          导出流程
+        <button class="ant-btn ant-btn-primary" @click="exportModel">
+          保存流程
         </button>
-        <button class="ant-btn ant-btn-info" @click="exportAsImage">
+        <button class="ant-btn ant-btn-success" @click="exportAsImage">
           导出图片
         </button>
       </div>
