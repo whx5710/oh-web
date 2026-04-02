@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { Page } from '@vben/common-ui';
+import { Button, message, Modal } from 'ant-design-vue';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
@@ -75,8 +76,10 @@ const exportModel = async () => {
     console.log('导出的 BPMN XML:', xml);
     // 可以在这里添加下载逻辑
     downloadFile(xml, 'process.bpmn', 'application/xml');
+    message.success('流程保存成功');
   } catch (error) {
     console.error('导出 BPMN 模型失败:', error);
+    message.error('流程保存失败');
   }
 };
 
@@ -95,8 +98,10 @@ const exportAsImage = async () => {
     
     // 直接下载 SVG 文件
     downloadFile(svg, 'process.svg', 'image/svg+xml');
+    message.success('图片导出成功');
   } catch (error) {
     console.error('导出 SVG 失败:', error);
+    message.error('图片导出失败');
   }
 };
 
@@ -107,9 +112,11 @@ const importModel = (xml: string) => {
   modeler.value.importXML(xml)
     .then(() => {
       console.log('BPMN 模型导入成功');
+      message.success('流程打开成功');
     })
     .catch((error) => {
       console.error('BPMN 模型导入失败:', error);
+      message.error('流程打开失败');
     });
 };
 
@@ -142,11 +149,24 @@ const handleFileUpload = (event: Event) => {
   reader.readAsText(file);
 };
 
+// 打开流程文件
+const handleOpenProcess = () => {
+  const fileInput = document.getElementById('bpmn-upload') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.click();
+  }
+};
+
 // 创建新流程
 const createNewProcess = () => {
-  if (confirm('确定要创建新流程吗？当前未保存的更改将会丢失。')) {
-    createDefaultProcess();
-  }
+  Modal.confirm({
+    title: '确认创建新流程',
+    content: '确定要创建新流程吗？当前未保存的更改将会丢失。',
+    onOk() {
+      createDefaultProcess();
+      message.success('新流程创建成功');
+    }
+  });
 };
 
 onMounted(() => {
@@ -165,9 +185,9 @@ onUnmounted(() => {
     <div class="bpmn-header">
       <h2>流程设计器</h2>
       <div class="bpmn-actions">
-        <button class="ant-btn" @click="createNewProcess">
+        <Button @click="createNewProcess">
           新建流程
-        </button>
+        </Button>
         <input
           type="file"
           accept=".bpmn"
@@ -175,15 +195,15 @@ onUnmounted(() => {
           style="display: none"
           id="bpmn-upload"
         />
-        <label for="bpmn-upload" class="ant-btn">
+        <Button @click="handleOpenProcess">
           打开流程
-        </label>
-        <button class="ant-btn ant-btn-primary" @click="exportModel">
+        </Button>
+        <Button type="primary" @click="exportModel">
           保存流程
-        </button>
-        <button class="ant-btn ant-btn-success" @click="exportAsImage">
+        </Button>
+        <Button type="primary" danger @click="exportAsImage">
           导出图片
-        </button>
+        </Button>
       </div>
     </div>
     <div class="bpmn-content">
