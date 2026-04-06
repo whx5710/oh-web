@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Page } from '@vben/common-ui';
 import { Button, message, Modal, Select } from 'ant-design-vue';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
@@ -13,7 +13,8 @@ import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda';
 // 导入属性面板样式
 import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 
-import { getFlowList } from '#/api/system/flow';
+import type { BpmnFlowApi } from '#/api/system/flow';
+import { createFlow, getFlowList } from '#/api/system/flow';
 
 const containerRef = ref<HTMLElement>();
 const propertiesPanelRef = ref<HTMLElement>();
@@ -22,6 +23,7 @@ const modeler = ref<BpmnModeler>();
 // 选择流程，进行编辑
 const OPTIONS = ref<string[]>([]);
 const selectedItem = ref<string>('');
+const flowId = ref<string>('');
 
 // 处理流程选择
 const handleSelect = async (value: string) => {
@@ -36,7 +38,8 @@ const handleSelect = async (value: string) => {
     if (res.list && res.list.length > 0) {
       const flow = res.list[0];
       console.log('获取到的流程详情:', flow);
-      // 加载流程 XML
+      // 加载流程 XML 到模型器中
+      flowId.value = flow.id;
       if (flow.xml) {
         importModel(flow.xml);
         message.success('流程加载成功');
@@ -83,8 +86,6 @@ const initModeler = () => {
       }).then(res => {
         console.log('流程列表:', res.list);
         OPTIONS.value = res.list.map(item => item.keyCode);
-        console.log('OPTIONS:', OPTIONS.value);
-        console.log('selectedItem:', selectedItem.value);
       });
 };
 
@@ -108,32 +109,51 @@ const createDefaultProcess = async () => {
 
   try {
     await modeler.value.importXML(defaultXml);
+    flowId.value = '';
     console.log('BPMN 模型加载成功');
   } catch (error) {
     console.error('BPMN 模型加载失败:', error);
   }
 };
 
-// 导出 BPMN 模型
-const exportModel = async () => {
+// 保存 BPMN 模型到服务器
+const saveModel = async () => {
   if (!modeler.value) return;
-
   try {
+    // 获取 XML 内容
     const { xml } = await modeler.value.saveXML({ format: true });
-    console.log('导出的 BPMN XML:', xml);
-    // 获取流程 ID
+    
+    // 获取 SVG 内容
+    const { svg } = await modeler.value.saveSVG({
+      fit: true,
+      background: '#ffffff'
+    });
+    
+    // 获取流程信息
     let processId = 'process';
+    let processName = '流程';
     const elementRegistry = modeler.value.get('elementRegistry');
     const processElements = elementRegistry.filter(element => element.type === 'bpmn:Process');
     if (processElements.length > 0) {
       processId = processElements[0].id;
+      processName = processElements[0].name || processId;
     }
     
-    // 下载文件，使用流程 ID 作为文件名
-    downloadFile(xml, `${processId}.bpmn`, 'application/xml');
+    // 调用 createFlow 接口保存流程
+    const params: BpmnFlowApi.BpmnFlow = {
+      id: flowId.value,
+      keyCode: processId,
+      name: processName,
+      xml: xml,
+      svgStr: svg,
+      versionTag: '1.0.0',
+      note: '流程设计器创建'
+    };
+    
+    await createFlow(params);
     message.success('流程保存成功');
   } catch (error) {
-    console.error('导出 BPMN 模型失败:', error);
+    console.error('保存 BPMN 模型失败:', error);
     message.error('流程保存失败');
   }
 };
@@ -290,7 +310,7 @@ onUnmounted(() => {
         <Button @click="handleCopyXML">
           复制XML
         </Button>
-        <Button type="primary" @click="exportModel">
+        <Button type="primary" @click="saveModel">
           保存
         </Button>
         <Button type="primary" danger @click="exportAsImage">
@@ -339,7 +359,7 @@ onUnmounted(() => {
   display: flex;
   flex: 1;
   gap: 16px;
-  min-height: 650px;
+  min-height: 655px;
 }
 
 .bpmn-canvas {

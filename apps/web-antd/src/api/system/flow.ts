@@ -11,7 +11,7 @@ export namespace BpmnFlowApi {
     xml: string;
     svgStr: string;
     versionTag: string;
-    note?: string;
+    note?: string; // bpmn 流程备注
   }
 }
 
@@ -27,4 +27,12 @@ async function getFlowList(params: Recordable<any>) {
   );
 }
 
-export { getFlowList };
+/**
+ * 新建流程
+ * @param params 参数
+ */
+async function createFlow(params: BpmnFlowApi.BpmnFlow) {
+  return requestClient.post(`/${sysApi}/flow/saveOrUpdate`, params);
+}
+
+export { getFlowList, createFlow };
