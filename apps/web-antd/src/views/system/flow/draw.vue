@@ -32,7 +32,9 @@ const handleSelect = async (value: string) => {
   try {
     // 调用 getFlowList 获取流程详情
     const res = await getFlowList({
-      keyCode: value
+      keyCode: value,
+      pageNum: 1,
+      pageSize: 10
     });
     
     if (res.list && res.list.length > 0) {
