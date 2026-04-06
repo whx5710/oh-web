@@ -134,11 +134,33 @@ const saveModel = async () => {
     // 获取流程信息
     let processId = 'process';
     let processName = '流程';
+    let processNote = '';
+    
+    // 获取流程元素
     const elementRegistry = modeler.value.get('elementRegistry');
     const processElements = elementRegistry.filter(element => element.type === 'bpmn:Process');
+    
     if (processElements.length > 0) {
-      processId = processElements[0].id;
-      processName = processElements[0].name || processId;
+      const processElement = processElements[0];
+      processId = processElement.id;
+      
+      // 从 businessObject 中获取 name 属性
+      processName = processElement.businessObject.name || processElement.name || processId;
+      console.log('processElement.name:', processElement.name);
+      console.log('processElement.businessObject.name:', processElement.businessObject.name);
+      
+      // 获取 documentation 内容
+      if (processElement.businessObject.documentation) {
+        const documentation = processElement.businessObject.documentation;
+        if (Array.isArray(documentation)) {
+          processNote = documentation[0].text || documentation[0].body || '';
+        } else if (documentation.text) {
+          processNote = documentation.text;
+        } else if (documentation.body) {
+          processNote = documentation.body;
+        }
+      }
+      console.log('processNote:', processNote);
     }
     
     // 调用 createFlow 接口保存流程
@@ -149,7 +171,7 @@ const saveModel = async () => {
       xml: xml,
       svgStr: svg,
       versionTag: '1.0.0',
-      note: '流程设计器创建'
+      note: processNote || '流程设计器创建'
     };
     
     await createFlow(params);
