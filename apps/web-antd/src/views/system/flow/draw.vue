@@ -142,6 +142,13 @@ const exportModel = async () => {
 const exportAsImage = async () => {
   if (!modeler.value) return;
 
+  let processId = 'process';
+  const elementRegistry = modeler.value.get('elementRegistry');
+  const processElements = elementRegistry.filter(element => element.type === 'bpmn:Process');
+  if (processElements.length > 0) {
+    processId = processElements[0].id;
+  }
+
   try {
     // 导出为 SVG，使用 fit: true 确保导出整个流程图
     const { svg } = await modeler.value.saveSVG({
@@ -152,7 +159,7 @@ const exportAsImage = async () => {
     });
     
     // 直接下载 SVG 文件
-    downloadFile(svg, 'process.svg', 'image/svg+xml');
+    downloadFile(svg, `${processId}.svg`, 'image/svg+xml');
     message.success('图片导出成功');
   } catch (error) {
     console.error('导出 SVG 失败:', error);
@@ -223,6 +230,22 @@ const createNewProcess = () => {
   });
 };
 
+// 复制 XML 到粘贴板
+const handleCopyXML = async () => {
+  if (!modeler.value) return;
+
+  try {
+    const { xml } = await modeler.value.saveXML({ format: true });
+    
+    // 使用 Clipboard API 复制到粘贴板
+    await navigator.clipboard.writeText(xml);
+    message.success('XML 已复制到粘贴板');
+  } catch (error) {
+    console.error('复制 XML 失败:', error);
+    message.error('复制 XML 失败');
+  }
+};
+
 onMounted(() => {
   initModeler();
 });
@@ -252,7 +275,7 @@ onUnmounted(() => {
           }"
         ></Select>
         <Button @click="createNewProcess">
-          新建流程
+          新建
         </Button>
         <input
           type="file"
@@ -262,10 +285,13 @@ onUnmounted(() => {
           id="bpmn-upload"
         />
         <Button @click="handleOpenProcess">
-          打开流程文件
+          打开
+        </Button>
+        <Button @click="handleCopyXML">
+          复制XML
         </Button>
         <Button type="primary" @click="exportModel">
-          保存流程
+          保存
         </Button>
         <Button type="primary" danger @click="exportAsImage">
           导出图片
@@ -313,7 +339,7 @@ onUnmounted(() => {
   display: flex;
   flex: 1;
   gap: 16px;
-  min-height: 700px;
+  min-height: 650px;
 }
 
 .bpmn-canvas {
