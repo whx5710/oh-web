@@ -290,6 +290,31 @@ const handleCopyXML = async () => {
   }
 };
 
+// 放大流程
+const zoomIn = () => {
+  if (!modeler.value) return;
+  const canvas = modeler.value.get('canvas');
+  const viewbox = canvas.viewbox();
+  const newScale = viewbox.scale * 1.1;
+  canvas.viewbox({ x: viewbox.x, y: viewbox.y, width: viewbox.width / 1.1, height: viewbox.height / 1.1, scale: newScale });
+};
+
+// 缩小流程
+const zoomOut = () => {
+  if (!modeler.value) return;
+  const canvas = modeler.value.get('canvas');
+  const viewbox = canvas.viewbox();
+  const newScale = viewbox.scale * 0.9;
+  canvas.viewbox({ x: viewbox.x, y: viewbox.y, width: viewbox.width / 0.9, height: viewbox.height / 0.9, scale: newScale });
+};
+
+// 重置缩放
+const zoomReset = () => {
+  if (!modeler.value) return;
+  const canvas = modeler.value.get('canvas');
+  canvas.viewbox({ x: 0, y: 0, width: 1000, height: 800, scale: 1 });
+};
+
 onMounted(() => {
   initModeler();
 });
@@ -343,7 +368,20 @@ onUnmounted(() => {
       </div>
     </div>
     <div class="bpmn-content">
-      <div ref="containerRef" class="bpmn-canvas"></div>
+      <div ref="containerRef" class="bpmn-canvas">
+        <!-- 缩放控制栏 -->
+        <div class="zoom-controls">
+          <Button size="small" @click="zoomIn" title="放大">
+            +
+          </Button>
+          <Button size="small" @click="zoomReset" title="重置">
+            100%
+          </Button>
+          <Button size="small" @click="zoomOut" title="缩小">
+            -
+          </Button>
+        </div>
+      </div>
       <div ref="propertiesPanelRef" class="bpmn-properties-panel"></div>
     </div>
   </Page>
@@ -423,5 +461,31 @@ onUnmounted(() => {
 :deep(svg) {
   width: 100% !important;
   height: 100% !important;
+}
+
+/* 缩放控制栏样式 */
+.zoom-controls {
+  position: absolute;
+  bottom: 60px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 100;
+}
+
+.zoom-controls .ant-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.zoom-controls .ant-btn:nth-child(2) {
+  font-size: 12px;
 }
 </style>
