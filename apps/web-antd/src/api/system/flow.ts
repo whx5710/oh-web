@@ -5,7 +5,7 @@ import { sysApi } from '#/config/env';
 
 export namespace BpmnFlowApi {
   export interface BpmnFlow {
-    id: string;
+    id?: string;
     keyCode: string;
     name: string;
     xml: string;
@@ -13,13 +13,18 @@ export namespace BpmnFlowApi {
     versionTag: string;
     note?: string; // bpmn 流程备注
   }
+  // 分页查询流程列表数据
+  export interface BpmnFlowPage {
+    list: BpmnFlow[];
+    total: number;
+  }
 }
 
 /**
  * 获取流程列表数据
  */
 async function getFlowList(params: Recordable<any>) {
-  return requestClient.get<Array<BpmnFlowApi.BpmnFlow>>(
+  return requestClient.get<BpmnFlowApi.BpmnFlowPage>(
     `/${sysApi}/flow/page`,
     {
       params,
@@ -35,4 +40,8 @@ async function createFlow(params: BpmnFlowApi.BpmnFlow) {
   return requestClient.post(`/${sysApi}/flow/saveOrUpdate`, params);
 }
 
-export { getFlowList, createFlow };
+async function updateFlow(params: BpmnFlowApi.BpmnFlow) {
+  return requestClient.post(`/${sysApi}/flow/update`, params);
+}
+
+export { getFlowList, createFlow, updateFlow };

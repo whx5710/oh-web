@@ -14,16 +14,21 @@ import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda';
 import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 
 import type { BpmnFlowApi } from '#/api/system/flow';
-import { createFlow, getFlowList } from '#/api/system/flow';
+import { createFlow, getFlowList, updateFlow } from '#/api/system/flow';
 
 const containerRef = ref<HTMLElement>();
 const propertiesPanelRef = ref<HTMLElement>();
 const modeler = ref<BpmnModeler>();
+const editFlag = ref<string>('new');
 
 // 选择流程，进行编辑
-const OPTIONS = ref<string[]>([]);
+const OPTIONS = ref<FlowItem[]>([]);
 const selectedItem = ref<string>('');
 const flowId = ref<string>('');
+interface FlowItem {
+  keyCode: string;
+  name: string;
+}
 
 // 处理流程选择
 const handleSelect = async (value: string) => {
@@ -38,6 +43,7 @@ const handleSelect = async (value: string) => {
     });
     
     if (res.list && res.list.length > 0) {
+      editFlag.value = 'edit';
       const flow = res.list[0];
       console.log('获取到的流程详情:', flow);
       // 加载流程 XML 到模型器中
@@ -80,15 +86,31 @@ const initModeler = () => {
 
   // 创建默认流程
   createDefaultProcess();
-
   // 查询流程列表
-      getFlowList({
-        pageNum: 1,
-        pageSize: 999,
-      }).then(res => {
-        console.log('流程列表:', res.list);
-        OPTIONS.value = res.list.map(item => item.keyCode);
-      });
+  getFlowListApi({
+    pageNum: 1,
+    pageSize: 20,
+  })
+};
+
+/**
+ * 查询流程列表
+ * @param params 参数
+ */
+const getFlowListApi = async (params: any) => {
+  getFlowList(params).then((res: BpmnFlowApi.BpmnFlowPage) => {
+    // console.log('流程列表:', res.list);
+    OPTIONS.value = res.list.map(item => ({ keyCode: item.keyCode, name: item.name }));
+  });
+};
+
+// 处理关键字搜索
+const handleSearch = (value: string) => {
+  getFlowListApi({
+    pageNum: 1,
+    pageSize: 20,
+    keyWord: value
+  });
 };
 
 // 创建默认流程
@@ -152,7 +174,7 @@ const saveModel = async () => {
       // 获取 documentation 内容
       if (processElement.businessObject.documentation) {
         const documentation = processElement.businessObject.documentation;
-        if (Array.isArray(documentation)) {
+        if (Array.isArray(documentation) && documentation.length > 0) {
           processNote = documentation[0].text || documentation[0].body || '';
         } else if (documentation.text) {
           processNote = documentation.text;
@@ -162,20 +184,46 @@ const saveModel = async () => {
       }
       console.log('processNote:', processNote);
     }
-    
-    // 调用 createFlow 接口保存流程
-    const params: BpmnFlowApi.BpmnFlow = {
-      id: flowId.value,
-      keyCode: processId,
-      name: processName,
-      xml: xml,
-      svgStr: svg,
-      versionTag: '1.0.0',
-      note: processNote || '流程设计器创建'
-    };
-    
-    await createFlow(params);
-    message.success('流程保存成功');
+    if (editFlag.value === 'new') {
+      // 判断流程key是否已经存在
+      getFlowList({
+        keyCode: processId,
+        pageNum: 1,
+        pageSize: 2
+      }).then((res: BpmnFlowApi.BpmnFlowPage) => {
+        if (res.list && res.list.length > 0) {
+          message.error('流程key已存在');
+          return;
+        }else{
+          // 调用 createFlow 接口保存流程
+          const params: BpmnFlowApi.BpmnFlow = {
+            id: flowId.value,
+            keyCode: processId,
+            name: processName,
+            xml: xml,
+            svgStr: svg,
+            versionTag: '1.0.0',
+            note: processNote || '流程设计器创建'
+          };
+          createFlow(params).then(() => {
+            message.success('流程新增成功');
+          });
+        }
+      });
+    } else {
+      // 调用 createFlow 接口保存流程
+          const params: BpmnFlowApi.BpmnFlow = {
+            id: flowId.value,
+            keyCode: processId,
+            name: processName,
+            xml: xml,
+            svgStr: svg,
+            note: processNote || '流程设计器创建'
+          };
+          updateFlow(params).then(() => {
+            message.success('流程修改成功');
+          });
+    }
   } catch (error) {
     console.error('保存 BPMN 模型失败:', error);
     message.error('流程保存失败');
@@ -268,6 +316,7 @@ const createNewProcess = () => {
     title: '确认创建新流程',
     content: '确定要创建新流程吗？当前未保存的更改将会丢失。',
     onOk() {
+      editFlag.value = 'new';
       createDefaultProcess();
       message.success('新流程创建成功');
     }
@@ -334,14 +383,13 @@ onUnmounted(() => {
         <Select
           v-model="selectedItem"
           placeholder="选择流程编辑"
-          style="width: 200px"
-          :options="OPTIONS.map(item => ({ value: item, label: item }))"
+          style="width: 300px"
+          :options="OPTIONS.map(item => ({ value: item.keyCode, label: item.keyCode + ' - ' + item.name }))"
           @change="handleSelect"
           allowClear
           show-search
-          :filter-option="(input, option) => {
-            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-          }"
+          :filter-option="false"
+          @search="handleSearch"
         ></Select>
         <Button @click="createNewProcess">
           新建
