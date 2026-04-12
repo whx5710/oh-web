@@ -1,9 +1,19 @@
 <script lang="ts" setup>
 import type { BpmnFlowApi } from '#/api/system/flow';
-import { getFlowList, deleteFlow as deleteFlowApi, publishFlow as publishFlowApi } from '#/api/system/flow';
-import { Page } from '@vben/common-ui';
+import { getFlowList, deleteFlow as deleteFlowApi, publishFlow as publishFlowApi,listProcessByKey as listProcessByKeyApi } from '#/api/system/flow';
+import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Button, Card, Space, Tag, message, Input, Pagination, Popconfirm, Empty, Modal } from 'ant-design-vue';
 import { ref, onMounted } from 'vue';
+
+// 导入流程实例列表组件
+import ProcessList from './modules/processList.vue';
+
+// 创建流程实例列表抽屉
+const [FormDrawer, formDrawerApi] = useVbenDrawer({
+  connectedComponent: ProcessList,
+  destroyOnClose: true,
+  placement: 'right',
+});
 
 // 状态管理
 const flowList = ref<BpmnFlowApi.BpmnFlow[]>([]);
@@ -57,8 +67,8 @@ const handlePageChange = (page: number, size: number) => {
 
 // 查看流程详情
 const viewFlow = (row: BpmnFlowApi.BpmnFlow) => {
-  message.info(`查看流程: ${row.name}`);
-  // 这里可以添加查看流程详情的逻辑
+  // 打开流程实例列表抽屉
+  formDrawerApi.setData({ keyCode: row.keyCode }).open();
 };
 
 // 删除流程
@@ -196,6 +206,9 @@ onMounted(() => {
         <div class="preview-svg" v-html="previewSvg"></div>
       </Modal>
     </div>
+    
+    <!-- 流程实例列表抽屉 -->
+    <FormDrawer />
   </Page>
 </template>
 

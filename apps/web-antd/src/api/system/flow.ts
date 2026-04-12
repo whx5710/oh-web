@@ -19,6 +19,16 @@ export namespace BpmnFlowApi {
     list: BpmnFlow[];
     total: number;
   }
+  // 流程历史发布记录
+  export interface ProcessHistory {
+    id?: string;
+    deploymentId: string; // 流程部署id
+    name: string; // 流程名称
+    processKey: string; // 流程key
+    resourceName: string; // 流程资源名称
+    versionTag: string;
+    createTime?: string; // 创建时间
+  }
 }
 
 /**
@@ -66,4 +76,15 @@ async function publishFlow(keyCode: string) {
   return requestClient.get(`/${sysApi}/task/deployByKey/${keyCode}`);
 }
 
-export { getFlowList, createFlow, updateFlow, deleteFlow, publishFlow };
+/**
+ * 流程历史发布记录
+ * @param keyCode 流程key
+ * @returns 流程历史发布记录
+ */
+async function listProcessByKey(keyCode: string) {
+  return requestClient.get<BpmnFlowApi.ProcessHistory[]>(
+    `/${sysApi}/flow/listProcessByKey/${keyCode}`
+  );
+}
+
+export { getFlowList, createFlow, updateFlow, deleteFlow, publishFlow, listProcessByKey };
