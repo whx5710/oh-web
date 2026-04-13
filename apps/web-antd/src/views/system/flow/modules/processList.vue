@@ -164,28 +164,30 @@ function editRowEvent(row: BpmnFlowApi.Node) {
 </script>
 
 <template>
-  <Drawer class="w-full max-w-[80%]" :title="drawerTitle">
+  <Drawer class="w-full max-w-[75%]" :title="drawerTitle">
     <Grid table-title="">
       <template #toolbar-tools>
       </template>
     </Grid>
   </Drawer>
-  <Modal :title="nodeTitle" class="w-full max-w-[80%]">
+  <Modal :title="nodeTitle" class="w-full">
     <Row>
       <Col :span="18">
-        <NodeGrid table-title="" class="h-full max-h-[600px]">
-          <!-- <template #toolbar-tools>
-          </template> -->
-          <template #action="{ row }">
-            <template v-if="hasEditStatus(row)">
-              <Button type="link" @click="saveRowEvent(row)">保存</Button>
-              <Button type="link" @click="cancelRowEvent(row)">取消</Button>
+        <Page auto-content-height>
+          <NodeGrid table-title="" class="h-full max-h-[600px]">
+            <!-- <template #toolbar-tools>
+            </template> -->
+            <template #action="{ row }">
+              <template v-if="hasEditStatus(row)">
+                <Button type="link" @click="saveRowEvent(row)">保存</Button>
+                <Button type="link" @click="cancelRowEvent(row)">取消</Button>
+              </template>
+              <template v-else>
+                <Button type="link" @click="editRowEvent(row)">编辑</Button>
+              </template>
             </template>
-            <template v-else>
-              <Button type="link" @click="editRowEvent(row)">编辑</Button>
-            </template>
-          </template>
-        </NodeGrid>
+          </NodeGrid>
+        </Page>
       </Col>
       <Col :span="6">
         <JsonViewer

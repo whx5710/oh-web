@@ -18,6 +18,7 @@ export function useProcessHistoryColumns<T = BpmnFlowApi.ProcessHistory>(
       align: 'left',
       title: '实例ID',
       field: 'id',
+      minWidth: 200,
     },
     {
       title: '名称',
