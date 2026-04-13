@@ -29,6 +29,23 @@ export namespace BpmnFlowApi {
     versionTag: string;
     createTime?: string; // 创建时间
   }
+  // 环节节点
+  export interface Node {
+    id?: string;
+    procDefId: string; // 流程定义ID
+    actDefId: string; // 环节ID
+    nodeName: string; // 环节节点名称
+    elementType: string; // 节点类型 UserTask、ExclusiveGateway等
+    conditionExpression?: string; // 条件表达式
+    jsonParams?: string; // 节点参数json字符串格式
+    note?: string; // 备注
+  }
+
+  // 分页查询节点列表数据
+  export interface NodePage {
+    list: Node[];
+    total: number;
+  }
 }
 
 /**
@@ -86,5 +103,27 @@ async function listProcessByKey(keyCode: string) {
     `/${sysApi}/flow/listProcessByKey/${keyCode}`
   );
 }
+/**
+ * 获取节点列表数据
+ * @param params 参数
+ * @returns 节点列表数据
+ */
+async function getNodeList(params: Recordable<any>) {
+  return requestClient.get<BpmnFlowApi.NodePage>(
+    `/${sysApi}/flow/node/page`,
+    {
+      params,
+    },
+  );
+}
 
-export { getFlowList, createFlow, updateFlow, deleteFlow, publishFlow, listProcessByKey };
+/**
+ * 更新节点
+ * @param params 参数
+ * @returns 
+ */
+async function updateNode(params: BpmnFlowApi.Node) {
+  return requestClient.post(`/${sysApi}/flow/node/update`, params);
+}
+
+export { getFlowList, createFlow, updateFlow, deleteFlow, publishFlow, listProcessByKey, getNodeList, updateNode };

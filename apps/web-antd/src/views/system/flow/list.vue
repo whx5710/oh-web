@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { BpmnFlowApi } from '#/api/system/flow';
-import { getFlowList, deleteFlow as deleteFlowApi, publishFlow as publishFlowApi,listProcessByKey as listProcessByKeyApi } from '#/api/system/flow';
+import { getFlowList, deleteFlow as deleteFlowApi, publishFlow as publishFlowApi } from '#/api/system/flow';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Button, Card, Space, Tag, message, Input, Pagination, Popconfirm, Empty, Modal } from 'ant-design-vue';
 import { ref, onMounted } from 'vue';
@@ -68,7 +68,7 @@ const handlePageChange = (page: number, size: number) => {
 // 查看流程详情
 const viewFlow = (row: BpmnFlowApi.BpmnFlow) => {
   // 打开流程实例列表抽屉
-  formDrawerApi.setData({ keyCode: row.keyCode }).open();
+  formDrawerApi.setData({ keyCode: row.keyCode, name: row.name }).open();
 };
 
 // 删除流程
