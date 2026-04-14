@@ -80,11 +80,10 @@ function onViewClick(e: OnActionClickParams<BpmnFlowApi.ProcessHistory>) {
 const [Modal, modalApi] = useVbenModal({
   // showConfirmButton: false,
   confirmText: '全部保存',
-  showCancelButton: false,
+  // showCancelButton: false,
   fullscreen: true,
   async onConfirm() {
     const data = nodeGridApi.grid.getData();
-    console.log('data -----2------- ', data);
     if (!data) {
       return;
     }
@@ -213,12 +212,10 @@ function editRowEvent(row: BpmnFlowApi.Node) {
     </Grid>
   </Drawer>
   <Modal :title="nodeTitle" class="min-w-[80%]">
-       <Row>
+    <Row>
       <Col :span="18">
         <Page auto-content-height>
-          <NodeGrid table-title="" auto-content-height >
-            <!-- <template #toolbar-tools>
-            </template> -->
+          <NodeGrid table-title="" auto-content-height style="min-height: 550px;">
             <template #action="{ row }">
               <template v-if="hasEditStatus(row)">
                 <Button type="link" @click="saveRowEvent(row)">保存</Button>
