@@ -7,9 +7,9 @@ import type {
 } from '#/adapter/vxe-table';
 import { ref } from 'vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listProcessByKey as listProcessByKeyApi, getNodeList, updateNode } from '#/api/system/flow';
-import { Button, message, Row, Col, Card } from 'ant-design-vue';
-import { useVbenDrawer, useVbenModal, JsonViewer } from '@vben/common-ui';
+import { listProcessByKey as listProcessByKeyApi, getNodeList, updateNode, updateNodeBatch } from '#/api/system/flow';
+import { Button, message, Row, Col, Modal as ModalComponent } from 'ant-design-vue';
+import { useVbenDrawer, useVbenModal, JsonViewer, Page } from '@vben/common-ui';
 import { useProcessHistoryColumns } from '../data';
 import type { BpmnFlowApi } from '#/api/system/flow';
 
@@ -78,9 +78,32 @@ function onViewClick(e: OnActionClickParams<BpmnFlowApi.ProcessHistory>) {
 }
 
 const [Modal, modalApi] = useVbenModal({
-  showConfirmButton: false,
+  // showConfirmButton: false,
+  confirmText: '全部保存',
   showCancelButton: false,
+  fullscreen: true,
   async onConfirm() {
+    const data = nodeGridApi.grid.getData();
+    console.log('data -----2------- ', data);
+    if (!data) {
+      return;
+    }
+    ModalComponent.confirm({
+      content: '是否全部保存？',
+      onCancel() {
+        console.warn('已取消');
+      },
+      onOk() {
+        updateNodeBatch(data).then(() => {
+          message.success('保存成功');
+          nodeGridApi.query();
+        }).catch(() => {
+          console.error('保存节点失败');
+          message.error('保存节点失败');
+        });
+      },
+      title: '是否保存当前页',
+    });
   },
   onOpenChange(isOpen) {
     if (isOpen) {
@@ -97,10 +120,27 @@ const gridOptions: VxeGridProps<BpmnFlowApi.Node> = {
     { title: '序号', type: 'seq', width: 50 },
     { field: 'actDefId', title: '环节ID', align: 'left' },
     { field: 'nodeName', title: '名称', align: 'left' },
-    { field: 'elementType', title: '类型', width: 100 },
+    { 
+      cellRender: {
+        name: 'CellTag',
+        options: [
+          { color: '#f50', label: 'StartEvent', value: 'StartEvent' },
+          { color: '#f50', label: 'EndEvent', value: 'EndEvent' },
+          { color: '#2db7f5', label: 'UserTask', value: 'UserTask' },
+          { color: '#108ee9', label: 'ExclusiveGateway', value: 'ExclusiveGateway' },
+          { color: '#2db7f5', label: 'ManualTask', value: 'ManualTask' },
+          { color: '#2db7f5', label: 'ReceiveTask', value: 'ReceiveTask' },
+          { color: '#2db760', label: 'SequenceFlow', value: 'SequenceFlow' },
+        ],
+      },
+      field: 'elementType',
+      title: '类型',
+      width: 120
+    },
     { field: 'conditionExpression', title: '条件表达式' },
     { editRender: { name: 'input', placeholder: '请输入json格式参数' }, field: 'jsonParams', title: '自定义json参数', minWidth: 120 },
     { editRender: { name: 'input', placeholder: '请输入备注' }, field: 'note', title: '备注' },
+    { editRender: { name: 'input', placeholder: '请输入排序', attrs: { type: 'number' } }, field: 'sort', title: '排序' },
     { slots: { default: 'action' }, title: '操作', width: 140 },
   ],
   editConfig: {
@@ -108,6 +148,7 @@ const gridOptions: VxeGridProps<BpmnFlowApi.Node> = {
     trigger: 'click',
   },
   height: 'auto',
+  border: true,
   pagerConfig: {},
   proxyConfig: {
     ajax: {
@@ -151,10 +192,11 @@ async function saveRowEvent(row: BpmnFlowApi.Node) {
   nodeGridApi.setLoading(true);
   await updateNode(row).then(() => {
     nodeGridApi.setLoading(false);
-    message.success({ content: `保存成功！nodeName=${row.nodeName}` });
+    message.success({ content: `保存成功！nodeName=${row.nodeName || row.actDefId || ''}` });
+    nodeGridApi.query();
   }).catch(() => {
     nodeGridApi.setLoading(false);
-    message.error({ content: `保存失败！nodeName=${row.nodeName}` });
+    message.error({ content: `保存失败！nodeName=${row.nodeName || row.actDefId || ''}` }); 
   });
 }
 // 编辑
@@ -170,11 +212,11 @@ function editRowEvent(row: BpmnFlowApi.Node) {
       </template>
     </Grid>
   </Drawer>
-  <Modal :title="nodeTitle" class="w-full">
-    <Row>
+  <Modal :title="nodeTitle" class="min-w-[80%]">
+       <Row>
       <Col :span="18">
         <Page auto-content-height>
-          <NodeGrid table-title="" class="h-full max-h-[600px]">
+          <NodeGrid table-title="" auto-content-height >
             <!-- <template #toolbar-tools>
             </template> -->
             <template #action="{ row }">

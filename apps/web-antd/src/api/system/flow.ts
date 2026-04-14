@@ -39,6 +39,7 @@ export namespace BpmnFlowApi {
     conditionExpression?: string; // 条件表达式
     jsonParams?: string; // 节点参数json字符串格式
     note?: string; // 备注
+    sort?: number; // 排序字段
   }
 
   // 分页查询节点列表数据
@@ -126,4 +127,13 @@ async function updateNode(params: BpmnFlowApi.Node) {
   return requestClient.post(`/${sysApi}/flow/node/update`, params);
 }
 
-export { getFlowList, createFlow, updateFlow, deleteFlow, publishFlow, listProcessByKey, getNodeList, updateNode };
+/**
+ * 批量更新节点排序
+ * @param params 参数
+ * @returns 
+ */
+async function updateNodeBatch(params: BpmnFlowApi.Node[]) {
+  return requestClient.post(`/${sysApi}/flow/node/updateBatch`, params);
+}
+
+export { getFlowList, createFlow, updateFlow, deleteFlow, publishFlow, listProcessByKey, getNodeList, updateNode, updateNodeBatch };
