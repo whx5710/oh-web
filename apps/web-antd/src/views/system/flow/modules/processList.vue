@@ -214,8 +214,8 @@ function editRowEvent(row: BpmnFlowApi.Node) {
   <Modal :title="nodeTitle" class="min-w-[80%]">
     <Row>
       <Col :span="18">
-        <Page auto-content-height>
-          <NodeGrid table-title="" auto-content-height style="min-height: 550px;">
+        <Page auto-content-height style="height: calc(var(--vben-content-height) - 40px); overflow-y: auto;">
+          <NodeGrid table-title="" auto-content-height class="min-h-[550px]">
             <template #action="{ row }">
               <template v-if="hasEditStatus(row)">
                 <Button type="link" @click="saveRowEvent(row)">保存</Button>
