@@ -376,10 +376,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Page auto-content-height class="bpmn-container">
-    <div class="bpmn-header">
-      <h2>流程设计器</h2>
-      <div class="bpmn-actions">
+  <Page auto-content-height class="flex flex-col h-full">
+    <div class="flex justify-between items-center p-4 bg-white border-b border-gray-200 flex-shrink-0">
+      <h2 class="m-0 text-lg font-semibold text-gray-800">流程设计器</h2>
+      <div class="flex gap-2">
         <Select
           v-model="selectedItem"
           placeholder="选择流程编辑"
@@ -398,7 +398,7 @@ onUnmounted(() => {
           type="file"
           accept=".bpmn"
           @change="handleFileUpload"
-          style="display: none"
+          class="hidden"
           id="bpmn-upload"
         />
         <Button @click="handleOpenProcess">
@@ -415,81 +415,27 @@ onUnmounted(() => {
         </Button>
       </div>
     </div>
-    <div class="bpmn-content">
-      <div ref="containerRef" class="bpmn-canvas">
+    <div class="flex flex-1 gap-4 min-h-[655px]">
+      <div ref="containerRef" class="flex-1 bg-white border border-gray-300 rounded-md overflow-hidden relative">
         <!-- 缩放控制栏 -->
-        <div class="zoom-controls">
-          <Button size="small" @click="zoomIn" title="放大">
+        <div class="absolute bottom-20 right-8 flex flex-col gap-1 z-100">
+          <Button size="small" @click="zoomIn" title="放大" class="w-8 h-8 flex items-center justify-center p-0 rounded">
             +
           </Button>
-          <Button size="small" @click="zoomReset" title="重置">
+          <Button size="small" @click="zoomReset" title="重置" class="w-8 h-8 flex items-center justify-center p-0 rounded text-xs">
             100%
           </Button>
-          <Button size="small" @click="zoomOut" title="缩小">
+          <Button size="small" @click="zoomOut" title="缩小" class="w-8 h-8 flex items-center justify-center p-0 rounded">
             -
           </Button>
         </div>
       </div>
-      <div ref="propertiesPanelRef" class="bpmn-properties-panel"></div>
+      <div ref="propertiesPanelRef" class="w-[300px] bg-white border border-gray-300 rounded-md overflow-auto flex-shrink-0"></div>
     </div>
   </Page>
 </template>
 
 <style scoped>
-.bpmn-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.bpmn-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
-  /* margin-bottom: 16px; */
-  flex-shrink: 0;
-}
-
-.bpmn-header h2 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.85);
-}
-
-.bpmn-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.bpmn-content {
-  display: flex;
-  flex: 1;
-  gap: 16px;
-  min-height: 655px;
-}
-
-.bpmn-canvas {
-  flex: 1;
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-
-.bpmn-properties-panel {
-  width: 300px;
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
-  overflow: auto;
-  flex-shrink: 0;
-}
-
 /* 确保 BPMN 画布占满容器 */
 :deep(.bjs-container) {
   position: absolute !important;
@@ -509,31 +455,5 @@ onUnmounted(() => {
 :deep(svg) {
   width: 100% !important;
   height: 100% !important;
-}
-
-/* 缩放控制栏样式 */
-.zoom-controls {
-  position: absolute;
-  bottom: 60px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  z-index: 100;
-}
-
-.zoom-controls .ant-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.zoom-controls .ant-btn:nth-child(2) {
-  font-size: 12px;
 }
 </style>
