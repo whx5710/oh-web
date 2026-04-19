@@ -10,7 +10,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { listProcessByKey as listProcessByKeyApi, getNodeList, updateNode, updateNodeBatch } from '#/api/system/flow';
 import { Button, message, Row, Col, Modal as ModalComponent } from 'ant-design-vue';
 import { useVbenDrawer, useVbenModal, JsonViewer, Page } from '@vben/common-ui';
-import { useProcessHistoryColumns } from '../data';
+import { useProcessHistoryColumns, useGridFormSchema } from '../data';
 import type { BpmnFlowApi } from '#/api/system/flow';
 
 const keyCode = ref('');
@@ -140,22 +140,24 @@ const gridOptions: VxeGridProps<BpmnFlowApi.Node> = {
     { editRender: { name: 'input', placeholder: '请输入json格式参数' }, field: 'jsonParams', title: '自定义json参数', minWidth: 120 },
     { editRender: { name: 'input', placeholder: '请输入备注' }, field: 'note', title: '备注' },
     { editRender: { name: 'input', placeholder: '请输入排序', attrs: { type: 'number' } }, field: 'sort', title: '排序' },
-    { slots: { default: 'action' }, title: '操作', width: 140 },
+    { slots: { default: 'action' }, title: '操作', minWidth: 140 },
   ],
   editConfig: {
     mode: 'row',
     trigger: 'click',
   },
   height: 'auto',
+  keepSource: true,
   border: true,
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({ page }) => {
+      query: async ({ page }, _params) => {
         return await getNodeList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           procDefId: procDefId.value,
+          ..._params,
         });
       },
     },
@@ -165,7 +167,7 @@ const gridOptions: VxeGridProps<BpmnFlowApi.Node> = {
     keyField: 'id',
     isCurrent: true, // 高亮选中行
   }
-};
+} as VxeTableGridOptions<BpmnFlowApi.Node>;
 
 // 点击事件
 const gridEvents: VxeGridListeners<BpmnFlowApi.Node> = {
@@ -175,7 +177,25 @@ const gridEvents: VxeGridListeners<BpmnFlowApi.Node> = {
 };
 
 // 流程实例环节详情列表
-const [NodeGrid, nodeGridApi] = useVbenVxeGrid({ gridOptions, gridEvents });
+const [NodeGrid, nodeGridApi] = useVbenVxeGrid({ 
+  gridOptions,
+  gridEvents,
+  // 搜索表单
+  formOptions: {
+    schema: useGridFormSchema(),
+    submitOnChange: true,
+    showCollapseButton: false, // 是否显示展开/折叠
+  },
+  toolbarConfig: {
+    custom: true,
+    export: false,
+    refresh: true,
+    refreshOptions: { code: 'query' },
+    search: true,
+    zoom: true,
+  },
+  // showSearchForm: false, // 默认隐藏搜索表单
+ });
 
 // 判断是否在编辑状态
 function hasEditStatus(row: BpmnFlowApi.Node) {
@@ -216,6 +236,8 @@ function editRowEvent(row: BpmnFlowApi.Node) {
       <Col :span="18">
         <Page auto-content-height style="height: calc(var(--vben-content-height) - 40px); overflow-y: auto;">
           <NodeGrid table-title="" auto-content-height class="min-h-[550px]">
+            <template #toolbar-tools>
+            </template>
             <template #action="{ row }">
               <template v-if="hasEditStatus(row)">
                 <Button type="link" @click="saveRowEvent(row)">保存</Button>

@@ -1,5 +1,6 @@
 import type { OnActionClickFn, VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { BpmnFlowApi } from '#/api/system/flow';
+import type { VbenFormSchema } from '#/adapter/form';
 
 // 流程发布历史表格
 export function useProcessHistoryColumns<T = BpmnFlowApi.ProcessHistory>(
@@ -53,6 +54,20 @@ export function useProcessHistoryColumns<T = BpmnFlowApi.ProcessHistory>(
       fixed: 'right',
       title: '操作',
       width: 120,
+    },
+  ];
+}
+
+// 搜索表单
+export function useGridFormSchema(): VbenFormSchema[] {
+  return [
+    {
+      component: 'Input',
+      fieldName: 'keyWord',
+      label: '关键字',
+      componentProps: {
+        allowClear: true,
+      },
     },
   ];
 }

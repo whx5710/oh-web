@@ -50,20 +50,6 @@ export function useSchema(): VbenFormSchema[] {
         defaultValue: 0,
       },
     },
-    // {
-    //   component: 'RadioGroup',
-    //   componentProps: {
-    //     buttonStyle: 'solid',
-    //     options: [
-    //       { label: $t('common.enabled'), value: 1 },
-    //       { label: $t('common.disabled'), value: 0 },
-    //     ],
-    //     optionType: 'button',
-    //   },
-    //   defaultValue: 1,
-    //   fieldName: 'status',
-    //   label: $t('system.dept.status'),
-    // },
     {
       component: 'Textarea',
       componentProps: {
@@ -92,14 +78,6 @@ export function useGridFormSchema(): VbenFormSchema[] {
         allowClear: true,
       },
     },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'tenantId',
-    //   label: '租户ID',
-    //   componentProps: {
-    //     allowClear: true,
-    //   },
-    // },
     {
       component: 'Input',
       fieldName: 'tenantName',
@@ -108,19 +86,6 @@ export function useGridFormSchema(): VbenFormSchema[] {
         allowClear: true,
       },
     },
-    // {
-    //   component: 'Input',
-    //   fieldName: 'note',
-    //   label: $t('system.dept.remark'),
-    //   componentProps: {
-    //     allowClear: true,
-    //   },
-    // },
-    // {
-    //   component: 'RangePicker',
-    //   fieldName: 'createTime',
-    //   label: $t('system.dept.createTime'),
-    // },
   ];
 }
 
