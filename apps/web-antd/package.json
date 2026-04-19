@@ -45,6 +45,7 @@
     "@vueuse/core": "catalog:",
     "ant-design-vue": "catalog:",
     "bpmn-js": "^18.14.0",
+    "bpmn-js-i18n": "^2.3.0",
     "bpmn-js-properties-panel": "^5.53.0",
     "camunda-bpmn-js-behaviors": "^1.14.1",
     "camunda-bpmn-moddle": "^7.0.1",
