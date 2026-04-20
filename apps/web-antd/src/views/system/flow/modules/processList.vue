@@ -134,11 +134,11 @@ const gridOptions: VxeGridProps<BpmnFlowApi.Node> = {
       },
       field: 'elementType',
       title: '类型',
-      width: 120
+      width: 125
     },
     { field: 'conditionExpression', title: '条件表达式', width: 160 },
-    { editRender: { name: 'input', placeholder: '请输入json格式参数' }, field: 'jsonParams', title: '自定义json参数', width: 140 },
-    { editRender: { name: 'input', placeholder: '请输入备注' }, field: 'note', title: '备注', width: 160 },
+    { editRender: { name: 'input', placeholder: '请输入json格式参数' }, field: 'jsonParams', title: '自定义json参数', minWidth: 140 },
+    { editRender: { name: 'input', placeholder: '请输入备注' }, field: 'note', title: '备注', minWidth: 160 },
     { editRender: { name: 'input', placeholder: '请输入排序', attrs: { type: 'number' } }, field: 'sort', title: '排序', width: 80 },
     { slots: { default: 'action' }, title: '操作', width: 140 },
   ],
@@ -225,7 +225,7 @@ function editRowEvent(row: BpmnFlowApi.Node) {
 </script>
 
 <template>
-  <Drawer class="w-full max-w-[75%]" :title="drawerTitle">
+  <Drawer class="w-full max-w-[65%]" :title="drawerTitle">
     <Grid table-title="">
       <template #toolbar-tools>
       </template>

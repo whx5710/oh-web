@@ -267,12 +267,12 @@ const handleSelect = async (value: string) => {
     if (res.list && res.list.length > 0) {
       editFlag.value = 'edit';
       const flow = res.list[0];
-      console.log('获取到的流程详情:', flow);
+      // console.log('获取到的流程详情:', flow);
       // 加载流程 XML 到模型器中
       flowId.value = flow.id;
       if (flow.xml) {
         importModel(flow.xml);
-        message.success('流程加载成功');
+        // message.success('流程加载成功');
       } else {
         message.error('流程 XML 为空');
       }
@@ -499,7 +499,7 @@ const importModel = (xml: string) => {
 
   modeler.value.importXML(xml)
     .then(() => {
-      console.log('BPMN 模型导入成功');
+      // console.log('BPMN 模型导入成功');
       message.success('流程打开成功');
     })
     .catch((error) => {
@@ -649,7 +649,7 @@ onUnmounted(() => {
         </Button>
       </div>
     </div>
-    <div class="flex flex-1 gap-4 min-h-[655px]">
+    <div class="flex flex-1 gap-4 " style="height: calc(var(--vben-content-height) - 100px);">
       <div ref="containerRef" class="flex-1 bg-white border border-gray-300 rounded-md overflow-hidden relative">
         <!-- 缩放控制栏 -->
         <div class="absolute bottom-20 right-8 flex flex-col gap-1 z-100">

@@ -46,7 +46,7 @@ const loadFlowList = async () => {
     total.value = res.total || 0;
   } catch (error) {
     console.error('加载流程列表失败:', error);
-    message.error('加载流程列表失败');
+    // message.error('加载流程列表失败');
   } finally {
     loading.value = false;
   }
@@ -80,7 +80,7 @@ const deleteFlow = (row: BpmnFlowApi.BpmnFlow) => {
     loadFlowList();
   }).catch((error) => {
     console.error('删除流程失败:', error);
-    message.error('删除流程失败');
+    // message.error('删除流程失败');
   });
 };
 
@@ -96,7 +96,7 @@ const publishFlow = (row: BpmnFlowApi.BpmnFlow) => {
     loadFlowList();
   }).catch((error) => {
     console.error('发布流程失败:', error);
-    message.error('发布流程失败');
+    // message.error('发布流程失败');
   });
 };
 
