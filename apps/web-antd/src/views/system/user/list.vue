@@ -14,14 +14,14 @@ import { IconifyIcon, Plus } from '@vben/icons';
 import { downloadFileFromBlob } from '@vben/utils';
 
 import {
-  Button,
-  Card,
-  Col,
-  InputSearch,
-  message,
-  Popconfirm,
-  Row,
-} from 'ant-design-vue';
+  ElButton,
+  ElCard,
+  ElCol,
+  ElInput,
+  ElMessage,
+  ElPopconfirm,
+  ElRow,
+} from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getDeptTreeList } from '#/api/system/dept';
@@ -69,18 +69,14 @@ function onCreate() {
  * @param row
  */
 function onDelete(row: SystemUserApi.SystemUser) {
-  const hideLoading = message.loading({
+  const hideLoading = ElMessage.loading({
     content: $t('ui.actionMessage.deleting', [row.realName]),
     duration: 0,
-    key: 'action_process_msg',
-    // class: 'messageIndex',
-    style: { zIndex: 66 },
   });
   deleteUser(row.id)
     .then(() => {
-      message.success({
+      ElMessage.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.realName]),
-        key: 'action_process_msg',
       });
       refreshGrid();
     })
@@ -255,14 +251,15 @@ function batchExport() {
 }
 </script>
 <template>
-  <Row>
-    <Col :span="6">
+  <ElRow>
+    <ElCol :span="6">
       <Page auto-content-height>
-        <Card>
-          <InputSearch
-            v-model:value="searchValue"
+        <ElCard>
+          <ElInput
+            v-model="searchValue"
             style="margin-bottom: 8px"
             placeholder="请输入关键字"
+            clearable
           />
           <Tree
             ref="deptTreeRef"
@@ -293,29 +290,31 @@ function batchExport() {
               <span v-else>{{ item.value.name }}</span>
             </template>
           </Tree>
-        </Card>
+        </ElCard>
       </Page>
-    </Col>
-    <Col :span="18">
+    </ElCol>
+    <ElCol :span="18">
       <!-- content-class 对应tailwind样式，详情查看 https://tailwind.nodejs.cn/docs -->
       <Page auto-content-height content-class="pl-0">
         <FormModal @success="refreshGrid" />
         <Grid table-title="用户列表">
           <template #toolbar-tools>
-            <Button class="mr-2" type="primary" @click="onCreate">
+            <ElButton class="mr-2" type="primary" @click="onCreate">
               <Plus class="size-5" />
               新增
-            </Button>
-            <Popconfirm title="确定导出？" @confirm="batchExport">
-              <Button class="mr-2" type="primary">
-                <IconifyIcon icon="carbon:export" /> 导出
-              </Button>
-            </Popconfirm>
+            </ElButton>
+            <ElPopconfirm title="确定导出？" @confirm="batchExport">
+              <template #reference>
+                <ElButton class="mr-2" type="primary">
+                  <IconifyIcon icon="carbon:export" class="mr-1" /> 导出
+                </ElButton>
+              </template>
+            </ElPopconfirm>
           </template>
         </Grid>
       </Page>
-    </Col>
-  </Row>
+    </ElCol>
+  </ElRow>
 </template>
 
 <style lang="scss" scoped>

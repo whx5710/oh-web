@@ -1,3 +1,15 @@
+// 首先导入并配置 dayjs，确保 Element Plus 组件能正常使用
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import isBetween from 'dayjs/plugin/isBetween';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import weekday from 'dayjs/plugin/weekday';
+
+dayjs.extend(weekday);
+dayjs.extend(relativeTime);
+dayjs.extend(isBetween);
+dayjs.extend(customParseFormat);
+
 import { initPreferences } from '@vben/preferences';
 import { unmountGlobalLoading } from '@vben/utils';
 

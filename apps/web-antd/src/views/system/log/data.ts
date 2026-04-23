@@ -80,11 +80,25 @@ export function useGridFormSchema(): VbenFormSchema[] {
       },
       // rules: 'selectRequired',
     },
-    {
-      component: 'RangePicker',
-      fieldName: 'createTime',
-      label: '创建时间',
-    },
+    // 暂时移除日期选择器，避免 Element Plus 日期组件错误
+    // {
+    //   component: 'DatePicker',
+    //   fieldName: 'startTime',
+    //   label: '开始时间',
+    //   componentProps: {
+    //     valueFormat: 'YYYY-MM-DD',
+    //     placeholder: '请选择开始时间',
+    //   },
+    // },
+    // {
+    //   component: 'DatePicker',
+    //   fieldName: 'endTime',
+    //   label: '结束时间',
+    //   componentProps: {
+    //     valueFormat: 'YYYY-MM-DD',
+    //     placeholder: '请选择结束时间',
+    //   },
+    // },
   ];
 }
 // 搜索表单-操作日志
@@ -141,11 +155,25 @@ export function useOpGridFormSchema(): VbenFormSchema[] {
       },
       // rules: 'selectRequired',
     },
-    {
-      component: 'RangePicker',
-      fieldName: 'createTime',
-      label: '创建时间',
-    },
+    // 暂时移除日期选择器，避免 Element Plus 日期组件错误
+    // {
+    //   component: 'DatePicker',
+    //   fieldName: 'startTime',
+    //   label: '开始时间',
+    //   componentProps: {
+    //     valueFormat: 'YYYY-MM-DD',
+    //     placeholder: '请选择开始时间',
+    //   },
+    // },
+    // {
+    //   component: 'DatePicker',
+    //   fieldName: 'endTime',
+    //   label: '结束时间',
+    //   componentProps: {
+    //     valueFormat: 'YYYY-MM-DD',
+    //     placeholder: '请选择结束时间',
+    //   },
+    // },
   ];
 }
 // 登录日志

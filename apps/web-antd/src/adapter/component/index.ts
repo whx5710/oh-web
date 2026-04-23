@@ -511,7 +511,14 @@ async function initComponentAdapter() {
     Cascader: ElCascader,
     Checkbox: ElCheckbox,
     CheckboxGroup: ElCheckboxGroup,
-    DatePicker: ElDatePicker,
+    DatePicker: withDefaultPlaceholder(
+      defineComponent({
+        setup(props, { attrs, slots }) {
+          return () => h(ElDatePicker, { ...props, ...attrs }, slots);
+        },
+      }),
+      'input',
+    ),
     // 自定义默认按钮
     DefaultButton: (props, { attrs, slots }) => {
       return h(ElButton, { ...props, attrs, type: 'default' }, slots);

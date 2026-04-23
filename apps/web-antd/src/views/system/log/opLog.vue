@@ -9,7 +9,7 @@ import { Page } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 import { downloadFileFromBlob } from '@vben/utils';
 
-import { Button, Popconfirm } from 'ant-design-vue';
+import { ElButton, ElPopconfirm } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getOpLogPage, opLogExport } from '#/api/system/log';
@@ -48,7 +48,8 @@ const gridEvents: VxeGridListeners<SystemLogApi.SysLoginLog> = {
 const [Grid, gridApi] = useVbenVxeGrid({
   gridEvents,
   formOptions: {
-    fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
+    // 字段映射时间范围（已改为独立的开始/结束时间字段）
+    // fieldMappingTime: [['createTime', ['startTime', 'endTime']]],
     schema: useOpGridFormSchema(),
     submitOnChange: true,
     showCollapseButton: false, // 是否显示展开/折叠
@@ -67,6 +68,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
           if (formValues.endTime) {
             formValues.endTime = `${formValues.endTime} 23:59:59`;
           }
+          // 移除空值字段
+          if (!formValues.startTime) delete formValues.startTime;
+          if (!formValues.endTime) delete formValues.endTime;
           return await getOpLogPage({
             pageNum: page.currentPage,
             pageSize: page.pageSize,
@@ -117,11 +121,13 @@ function batchExport() {
   <Page auto-content-height>
     <Grid table-title="日志列表">
       <template #toolbar-tools>
-        <Popconfirm title="确定导出？" @confirm="batchExport">
-          <Button class="mr-2" type="primary">
-            <IconifyIcon icon="carbon:export" /> 导出
-          </Button>
-        </Popconfirm>
+        <ElPopconfirm title="确定导出？" @confirm="batchExport">
+          <template #reference>
+            <ElButton class="mr-2" type="primary">
+              <IconifyIcon icon="carbon:export" class="mr-1" /> 导出
+            </ElButton>
+          </template>
+        </ElPopconfirm>
       </template>
     </Grid>
   </Page>
