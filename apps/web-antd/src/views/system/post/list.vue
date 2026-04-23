@@ -8,7 +8,7 @@ import type { SystemRoleApi } from '#/api/system/role';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { ElButton, ElMessage } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deletePost, getPostPage } from '#/api/system/post';
@@ -125,14 +125,14 @@ function onEdit(row: SystemRoleApi.SystemRole) {
 }
 
 function onDelete(row: SystemRoleApi.SystemRole) {
-  const hideLoading = message.loading({
+  const hideLoading = ElMessage.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   deletePost(row.id)
     .then(() => {
-      message.success({
+      ElMessage.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
@@ -156,10 +156,10 @@ function onCreate() {
     <FormModal @success="onRefresh" />
     <Grid table-title="岗位列表">
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <ElButton type="primary" @click="onCreate">
           <Plus class="size-5" />
           新增岗位
-        </Button>
+        </ElButton>
       </template>
     </Grid>
   </Page>

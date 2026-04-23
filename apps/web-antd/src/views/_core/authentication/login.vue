@@ -9,7 +9,7 @@ import { computed, ref } from 'vue';
 import { AuthenticationLogin, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { message } from 'ant-design-vue';
+import { ElMessage } from 'element-plus';
 
 import { getCaptcha, loginApi } from '#/api/core/auth';
 import { getParamsByKeys } from '#/api/system/params';
@@ -65,7 +65,7 @@ async function authLogin(
           onSuccess,
         );
       } else {
-        message.error(res.msg);
+        ElMessage.error(res.msg);
         onCaptcha();
       }
     });

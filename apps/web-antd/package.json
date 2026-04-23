@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@bpmn-io/properties-panel": "^3.40.5",
+    "@element-plus/icons-vue": "^2.3.2",
     "@vben-core/menu-ui": "workspace:*",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
@@ -50,6 +51,7 @@
     "camunda-bpmn-js-behaviors": "^1.14.1",
     "camunda-bpmn-moddle": "^7.0.1",
     "dayjs": "catalog:",
+    "element-plus": "catalog:",
     "pinia": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"

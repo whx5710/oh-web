@@ -5,12 +5,6 @@
 
 /* eslint-disable vue/one-component-per-file */
 
-import type {
-  UploadChangeParam,
-  UploadFile,
-  UploadProps,
-} from 'ant-design-vue';
-
 import type { Component, Ref } from 'vue';
 
 import type { BaseFormComponentType } from '@vben/common-ui';
@@ -37,60 +31,33 @@ import { IconifyIcon } from '@vben/icons';
 import { $t } from '@vben/locales';
 import { isEmpty } from '@vben/utils';
 
-import { message, Modal, notification } from 'ant-design-vue';
-
-const AutoComplete = defineAsyncComponent(
-  () => import('ant-design-vue/es/auto-complete'),
-);
-const Button = defineAsyncComponent(() => import('ant-design-vue/es/button'));
-const Checkbox = defineAsyncComponent(
-  () => import('ant-design-vue/es/checkbox'),
-);
-const CheckboxGroup = defineAsyncComponent(() =>
-  import('ant-design-vue/es/checkbox').then((res) => res.CheckboxGroup),
-);
-const DatePicker = defineAsyncComponent(
-  () => import('ant-design-vue/es/date-picker'),
-);
-const Divider = defineAsyncComponent(() => import('ant-design-vue/es/divider'));
-const Input = defineAsyncComponent(() => import('ant-design-vue/es/input'));
-const InputNumber = defineAsyncComponent(
-  () => import('ant-design-vue/es/input-number'),
-);
-const InputPassword = defineAsyncComponent(() =>
-  import('ant-design-vue/es/input').then((res) => res.InputPassword),
-);
-const Mentions = defineAsyncComponent(
-  () => import('ant-design-vue/es/mentions'),
-);
-const Radio = defineAsyncComponent(() => import('ant-design-vue/es/radio'));
-const RadioGroup = defineAsyncComponent(() =>
-  import('ant-design-vue/es/radio').then((res) => res.RadioGroup),
-);
-const RangePicker = defineAsyncComponent(() =>
-  import('ant-design-vue/es/date-picker').then((res) => res.RangePicker),
-);
-const Rate = defineAsyncComponent(() => import('ant-design-vue/es/rate'));
-const Select = defineAsyncComponent(() => import('ant-design-vue/es/select'));
-const Space = defineAsyncComponent(() => import('ant-design-vue/es/space'));
-const Switch = defineAsyncComponent(() => import('ant-design-vue/es/switch'));
-const Textarea = defineAsyncComponent(() =>
-  import('ant-design-vue/es/input').then((res) => res.Textarea),
-);
-const TimePicker = defineAsyncComponent(
-  () => import('ant-design-vue/es/time-picker'),
-);
-const TreeSelect = defineAsyncComponent(
-  () => import('ant-design-vue/es/tree-select'),
-);
-const Cascader = defineAsyncComponent(
-  () => import('ant-design-vue/es/cascader'),
-);
-const Upload = defineAsyncComponent(() => import('ant-design-vue/es/upload'));
-const Image = defineAsyncComponent(() => import('ant-design-vue/es/image'));
-const PreviewGroup = defineAsyncComponent(() =>
-  import('ant-design-vue/es/image').then((res) => res.ImagePreviewGroup),
-);
+import {
+  ElAutocomplete,
+  ElButton,
+  ElCascader,
+  ElCheckbox,
+  ElCheckboxGroup,
+  ElDatePicker,
+  ElDialog,
+  ElDivider,
+  ElImage,
+  ElImageViewer,
+  ElInput,
+  ElInputNumber,
+  ElMention,
+  ElMessage,
+  ElNotification,
+  ElRadio,
+  ElRadioGroup,
+  ElRate,
+  ElSelect,
+  ElSelectV2,
+  ElSpace,
+  ElSwitch,
+  ElTimePicker,
+  ElTreeSelect,
+  ElUpload,
+} from 'element-plus';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -128,7 +95,7 @@ const withDefaultPlaceholder = <T extends Component>(
 
 const withPreviewUpload = () => {
   // 检查是否为图片文件的辅助函数
-  const isImageFile = (file: UploadFile): boolean => {
+  const isImageFile = (file: any): boolean => {
     const imageExtensions = new Set([
       'bmp',
       'gif',
@@ -169,7 +136,7 @@ const withPreviewUpload = () => {
         return {
           default: () =>
             h(
-              Button,
+              ElButton,
               {
                 icon: h(IconifyIcon, {
                   icon: 'ant-design:upload-outlined',
@@ -184,9 +151,9 @@ const withPreviewUpload = () => {
   };
   // 构建预览图片组
   const previewImage = async (
-    file: UploadFile,
+    file: any,
     visible: Ref<boolean>,
-    fileList: Ref<UploadProps['fileList']>,
+    fileList: Ref<any[]>,
   ) => {
     // 如果当前文件不是图片，直接打开
     if (!isImageFile(file)) {
@@ -195,15 +162,15 @@ const withPreviewUpload = () => {
       } else if (file.preview) {
         window.open(file.preview, '_blank');
       } else {
-        message.error($t('ui.formRules.previewWarning'));
+        ElMessage.error($t('ui.formRules.previewWarning'));
       }
       return;
     }
 
     // 对于图片文件，继续使用预览组
     const [ImageComponent, PreviewGroupComponent] = await Promise.all([
-      Image,
-      PreviewGroup,
+      ElImage,
+      ElImageViewer,
     ]);
 
     const getBase64 = (file: File) => {
@@ -221,8 +188,8 @@ const withPreviewUpload = () => {
 
     // 为所有没有预览地址的图片生成预览
     for (const imgFile of imageFiles) {
-      if (!imgFile.url && !imgFile.preview && imgFile.originFileObj) {
-        imgFile.preview = (await getBase64(imgFile.originFileObj)) as string;
+      if (!imgFile.url && !imgFile.preview && imgFile.raw) {
+        imgFile.preview = (await getBase64(imgFile.raw)) as string;
       }
     }
     const container: HTMLElement | null = document.createElement('div');
@@ -310,7 +277,7 @@ const withPreviewUpload = () => {
               objectUrl = URL.createObjectURL(file);
             }
             return h(
-              Modal,
+              ElDialog,
               {
                 open: open.value,
                 title: h('div', {}, [
@@ -368,7 +335,7 @@ const withPreviewUpload = () => {
   };
 
   return defineComponent({
-    name: Upload.name,
+    name: ElUpload.name,
     emits: ['update:modelValue'],
     setup: (
       props: any,
@@ -380,7 +347,7 @@ const withPreviewUpload = () => {
 
       const listType = attrs?.listType || attrs?.['list-type'] || 'text';
 
-      const fileList = ref<UploadProps['fileList']>(
+      const fileList = ref<any[]>(
         attrs?.fileList || attrs?.['file-list'] || [],
       );
 
@@ -390,11 +357,11 @@ const withPreviewUpload = () => {
       );
 
       const handleBeforeUpload = async (
-        file: UploadFile,
+        file: any,
         originFileList: Array<File>,
       ) => {
         if (maxSize.value && (file.size || 0) / 1024 / 1024 > maxSize.value) {
-          message.error($t('ui.formRules.sizeLimit', [maxSize.value]));
+          ElMessage.error($t('ui.formRules.sizeLimit', [maxSize.value]));
           file.status = 'removed';
           return false;
         }
@@ -406,7 +373,7 @@ const withPreviewUpload = () => {
           isImageFile(file)
         ) {
           file.status = 'removed';
-          // antd Upload组件问题 file参数获取的是UploadFile类型对象无法取到File类型 所以通过originFileList[0]获取
+          // Element Plus Upload组件问题 file参数获取的是UploadFile类型对象无法取到File类型 所以通过originFileList[0]获取
           const blob = await cropImage(originFileList[0], aspectRatio.value);
           return new Promise((resolve, reject) => {
             if (!blob) {
@@ -419,7 +386,7 @@ const withPreviewUpload = () => {
         return attrs.beforeUpload?.(file) ?? true;
       };
 
-      const handleChange = (event: UploadChangeParam) => {
+      const handleChange = (event: any) => {
         try {
           // 行内写法 handleChange: (event) => {}
           attrs.handleChange?.(event);
@@ -430,7 +397,7 @@ const withPreviewUpload = () => {
           console.error(error);
         }
         fileList.value = event.fileList.filter(
-          (file) => file.status !== 'removed',
+          (file: any) => file.status !== 'removed',
         );
         emit(
           'update:modelValue',
@@ -438,7 +405,7 @@ const withPreviewUpload = () => {
         );
       };
 
-      const handlePreview = async (file: UploadFile) => {
+      const handlePreview = async (file: any) => {
         previewVisible.value = true;
         await previewImage(file, previewVisible, fileList);
       };
@@ -467,7 +434,7 @@ const withPreviewUpload = () => {
 
       return () =>
         h(
-          Upload,
+          ElUpload,
           {
             ...props,
             ...attrs,
@@ -520,59 +487,77 @@ async function initComponentAdapter() {
     // import('xxx').then((res) => res.Button),
 
     ApiCascader: withDefaultPlaceholder(ApiComponent, 'select', {
-      component: Cascader,
-      fieldNames: { label: 'label', value: 'value', children: 'children' },
+      component: ElCascader,
+      props: { props: { label: 'label', value: 'value', children: 'children' } },
       loadingSlot: 'suffixIcon',
-      modelPropName: 'value',
+      modelPropName: 'modelValue',
       visibleEvent: 'onVisibleChange',
     }),
     ApiSelect: withDefaultPlaceholder(ApiComponent, 'select', {
-      component: Select,
+      component: ElSelect,
       loadingSlot: 'suffixIcon',
-      modelPropName: 'value',
+      modelPropName: 'modelValue',
       visibleEvent: 'onVisibleChange',
     }),
     ApiTreeSelect: withDefaultPlaceholder(ApiComponent, 'select', {
-      component: TreeSelect,
-      fieldNames: { label: 'label', value: 'value', children: 'children' },
+      component: ElTreeSelect,
+      props: { props: { label: 'label', value: 'value', children: 'children' } },
       loadingSlot: 'suffixIcon',
-      modelPropName: 'value',
-      optionsPropName: 'treeData',
+      modelPropName: 'modelValue',
+      optionsPropName: 'data',
       visibleEvent: 'onVisibleChange',
     }),
-    AutoComplete,
-    Cascader,
-    Checkbox,
-    CheckboxGroup,
-    DatePicker,
+    AutoComplete: ElAutocomplete,
+    Cascader: ElCascader,
+    Checkbox: ElCheckbox,
+    CheckboxGroup: ElCheckboxGroup,
+    DatePicker: ElDatePicker,
     // 自定义默认按钮
     DefaultButton: (props, { attrs, slots }) => {
-      return h(Button, { ...props, attrs, type: 'default' }, slots);
+      return h(ElButton, { ...props, attrs, type: 'default' }, slots);
     },
-    Divider,
+    Divider: ElDivider,
     IconPicker: withDefaultPlaceholder(IconPicker, 'select', {
-      iconSlot: 'addonAfter',
-      inputComponent: Input,
-      modelValueProp: 'value',
+      iconSlot: 'append',
+      inputComponent: ElInput,
+      modelValueProp: 'modelValue',
     }),
-    Input: withDefaultPlaceholder(Input, 'input'),
-    InputNumber: withDefaultPlaceholder(InputNumber, 'input'),
-    InputPassword: withDefaultPlaceholder(InputPassword, 'input'),
-    Mentions: withDefaultPlaceholder(Mentions, 'input'),
+    Input: withDefaultPlaceholder(ElInput, 'input'),
+    InputNumber: withDefaultPlaceholder(ElInputNumber, 'input'),
+    InputPassword: withDefaultPlaceholder(
+      defineComponent({
+        setup(props, { attrs, slots }) {
+          return () => h(ElInput, { ...props, ...attrs, type: 'password' }, slots);
+        },
+      }),
+      'input',
+    ),
+    Mentions: withDefaultPlaceholder(ElMention, 'input'),
     // 自定义主要按钮
     PrimaryButton: (props, { attrs, slots }) => {
-      return h(Button, { ...props, attrs, type: 'primary' }, slots);
+      return h(ElButton, { ...props, attrs, type: 'primary' }, slots);
     },
-    Radio,
-    RadioGroup,
-    RangePicker,
-    Rate,
-    Select: withDefaultPlaceholder(Select, 'select'),
-    Space,
-    Switch,
-    Textarea: withDefaultPlaceholder(Textarea, 'input'),
-    TimePicker,
-    TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
+    Radio: ElRadio,
+    RadioGroup: ElRadioGroup,
+    RangePicker: defineComponent({
+      setup(props, { attrs, slots }) {
+        return () => h(ElDatePicker, { ...props, ...attrs, type: 'daterange' }, slots);
+      },
+    }),
+    Rate: ElRate,
+    Select: withDefaultPlaceholder(ElSelect, 'select'),
+    Space: ElSpace,
+    Switch: ElSwitch,
+    Textarea: withDefaultPlaceholder(
+      defineComponent({
+        setup(props, { attrs, slots }) {
+          return () => h(ElInput, { ...props, ...attrs, type: 'textarea' }, slots);
+        },
+      }),
+      'input',
+    ),
+    TimePicker: ElTimePicker,
+    TreeSelect: withDefaultPlaceholder(ElTreeSelect, 'select'),
     Upload: withPreviewUpload(),
   };
 
@@ -583,7 +568,7 @@ async function initComponentAdapter() {
   globalShareState.defineMessage({
     // 复制成功消息提示
     copyPreferencesSuccess: (title, content) => {
-      notification.success({
+      ElNotification.success({
         description: content,
         message: title,
         placement: 'bottomRight',

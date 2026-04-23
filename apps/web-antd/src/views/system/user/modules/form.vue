@@ -5,7 +5,7 @@ import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { Button, message } from 'ant-design-vue';
+import { ElButton, ElMessage } from 'element-plus';
 
 import { useVbenForm } from '#/adapter/form';
 import { createUser, updateUser } from '#/api/system/user';
@@ -44,7 +44,7 @@ const [Modal, modalApi] = useVbenModal({
         await (formData.value?.id
           ? updateUser(formData.value.id, data)
           : createUser(data).then((msg) => {
-              message.success(msg, 5);
+              ElMessage.success(msg);
             }));
         modalApi.close();
         emit('success');
@@ -70,9 +70,9 @@ const [Modal, modalApi] = useVbenModal({
     <Form class="mx-4" />
     <template #prepend-footer>
       <div class="flex-auto">
-        <Button type="primary" danger @click="resetForm">
+        <ElButton type="primary" danger @click="resetForm">
           {{ $t('common.reset') }}
-        </Button>
+        </ElButton>
       </div>
     </template>
   </Modal>

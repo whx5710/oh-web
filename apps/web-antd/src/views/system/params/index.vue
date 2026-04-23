@@ -8,7 +8,7 @@ import type { SystemParamsApi } from '#/api/system/params';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { ElButton, ElMessage } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteParams, getParamsPage } from '#/api/system/params';
@@ -73,65 +73,19 @@ function onActionClick(e: OnActionClickParams<SystemParamsApi.SystemParam>) {
   }
 }
 
-/**
- * 将Antd的Modal.confirm封装为promise，方便在异步函数中调用。
- * @param content 提示内容
- * @param title 提示标题
- */
-/** function confirm(content: string, title: string) {
-  return new Promise((reslove, reject) => {
-    Modal.confirm({
-      content,
-      onCancel() {
-        reject(new Error('已取消'));
-      },
-      onOk() {
-        reslove(true);
-      },
-      title,
-    });
-  });
-} **/
-
-/**
- * 状态开关即将改变
- * @param newStatus 期望改变的状态值
- * @param row 行数据
- * @returns 返回false则中止改变，返回其他值（undefined、true）则允许改变
- */
-/** async function onStatusChange(
-  newStatus: number,
-  row: SystemRoleApi.SystemRole,
-) {
-  const status: Recordable<string> = {
-    0: '禁用',
-    1: '启用',
-  };
-  try {
-    await confirm(
-      `你要将${row.name}的状态切换为 【${status[newStatus.toString()]}】 吗？`,
-      `切换状态`,
-    );
-    await updateRole({ id: row.id, status: newStatus });
-    return true;
-  } catch {
-    return false;
-  }
-}*/
-
 function onEdit(row: SystemParamsApi.SystemParam) {
   formDrawerApi.setData(row).open();
 }
 
 function onDelete(row: SystemParamsApi.SystemParam) {
-  const hideLoading = message.loading({
+  const hideLoading = ElMessage.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   deleteParams(row.id)
     .then(() => {
-      message.success({
+      ElMessage.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
@@ -155,10 +109,10 @@ function onCreate() {
     <FormDrawer @success="onRefresh" />
     <Grid table-title="参数列表">
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <ElButton type="primary" @click="onCreate">
           <Plus class="size-5" />
           新增参数
-        </Button>
+        </ElButton>
       </template>
     </Grid>
   </Page>

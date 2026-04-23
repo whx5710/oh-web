@@ -14,7 +14,13 @@ import {
 import { get, isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
+import {
+  ElButton,
+  ElImage,
+  ElPopconfirm,
+  ElSwitch,
+  ElTag,
+} from 'element-plus';
 
 import { $t } from '#/locales';
 
@@ -65,7 +71,7 @@ setupVbenVxeTable({
       renderTableDefault(renderOpts, params) {
         const { props } = renderOpts;
         const { column, row } = params;
-        return h(Image, { src: row[column.field], ...props });
+        return h(ElImage, { src: row[column.field], ...props });
       },
     });
 
@@ -74,24 +80,24 @@ setupVbenVxeTable({
       renderTableDefault(renderOpts) {
         const { props } = renderOpts;
         return h(
-          Button,
+          ElButton,
           { size: 'small', type: 'link' },
           { default: () => props?.text },
         );
       },
     });
 
-    // 单元格渲染： Tag
+    // 单元格渲染： ElTag
     vxeUI.renderer.add('CellTag', {
       renderTableDefault({ options, props }, { column, row }) {
         const value = get(row, column.field);
-        const tagOptions = options ?? [
+        const tagElOptions = options ?? [
           { color: 'success', label: $t('common.enabled'), value: 1 },
           { color: 'error', label: $t('common.disabled'), value: 0 },
         ];
-        const tagItem = tagOptions.find((item) => item.value === value);
+        const tagItem = tagElOptions.find((item) => item.value === value);
         return h(
-          Tag,
+          ElTag,
           {
             ...props,
             ...objectOmit(tagItem ?? {}, ['label']),
@@ -125,7 +131,7 @@ setupVbenVxeTable({
             row[loadingKey] = false;
           }
         }
-        return h(Switch, finallyProps);
+        return h(ElSwitch, finallyProps);
       },
     });
 
@@ -186,7 +192,7 @@ setupVbenVxeTable({
 
         function renderBtn(opt: Recordable<any>, listen = true) {
           return h(
-            Button,
+            ElButton,
             {
               ...props,
               ...opt,
@@ -217,7 +223,7 @@ setupVbenVxeTable({
         function renderConfirm(opt: Recordable<any>) {
           let viewportWrapper: HTMLElement | null = null;
           return h(
-            Popconfirm,
+            ElPopconfirm,
             {
               /**
                * 当popconfirm用在固定列中时，将固定列作为弹窗的容器时可能会因为固定列较窄而无法容纳弹窗

@@ -8,7 +8,7 @@ import type { SystemTenantApi } from '#/api/system/tenant';
 import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { ElButton, ElMessage } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteTenant, getTenantPage } from '#/api/system/tenant';
@@ -90,14 +90,14 @@ function onEdit(row: SystemTenantApi.SystemTenant) {
 }
 
 function onDelete(row: SystemTenantApi.SystemTenant) {
-  const hideLoading = message.loading({
+  const hideLoading = ElMessage.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   deleteTenant(row.id)
     .then(() => {
-      message.success({
+      ElMessage.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
@@ -123,10 +123,10 @@ function onCreate() {
     <FormDrawer @success="onRefresh" />
     <Grid table-title="租户列表">
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <ElButton type="primary" @click="onCreate">
           <Plus class="size-5" />
           新增
-        </Button>
+        </ElButton>
       </template>
     </Grid>
   </Page>

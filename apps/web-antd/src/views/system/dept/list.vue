@@ -12,7 +12,7 @@ import { reactive, ref, watch } from 'vue';
 import { Page, Tree, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, Card, Col, InputSearch, message, Row } from 'ant-design-vue';
+import { ElButton, ElCard, ElCol, ElInput, ElMessage, ElRow } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteDept, getDeptPage, getDeptTreeList } from '#/api/system/dept';
@@ -56,14 +56,14 @@ function onCreate() {
  * @param row
  */
 function onDelete(row: SystemDeptApi.SystemDept) {
-  const hideLoading = message.loading({
+  const hideLoading = ElMessage.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   deleteDept(row.id)
     .then(() => {
-      message.success({
+      ElMessage.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
@@ -234,12 +234,12 @@ watch(searchValue, (value) => {
 });
 </script>
 <template>
-  <Row>
-    <Col :span="6">
+  <ElRow>
+    <ElCol :span="6">
       <Page auto-content-height>
-        <Card>
-          <InputSearch
-            v-model:value="searchValue"
+        <ElCard>
+          <ElInput
+            v-model="searchValue"
             style="margin-bottom: 8px"
             placeholder="请输入部门名称"
           />
@@ -273,22 +273,22 @@ watch(searchValue, (value) => {
               <span v-else>{{ item.value.name }}</span>
             </template>
           </Tree>
-        </Card>
+        </ElCard>
       </Page>
-    </Col>
-    <Col :span="18">
+    </ElCol>
+    <ElCol :span="18">
       <!-- content-class 对应tailwind样式，详情查看 https://tailwind.nodejs.cn/docs -->
       <Page auto-content-height content-class="pl-0">
         <FormModal @success="refreshGrid" />
         <Grid table-title="部门列表">
           <template #toolbar-tools>
-            <Button type="primary" @click="onCreate">
+            <ElButton type="primary" @click="onCreate">
               <Plus class="size-5" />
               新增
-            </Button>
+            </ElButton>
           </template>
         </Grid>
       </Page>
-    </Col>
-  </Row>
+    </ElCol>
+  </ElRow>
 </template>

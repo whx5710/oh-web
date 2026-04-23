@@ -7,7 +7,7 @@ import { LOGIN_PATH } from '@vben/constants';
 import { preferences } from '@vben/preferences';
 import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 
-import { message, notification } from 'ant-design-vue';
+import { ElMessage, ElNotification } from 'element-plus';
 import { defineStore } from 'pinia';
 
 import { getAccessCodesApi, loginApi, logoutApi } from '#/api/core';
@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
             onSuccess,
           );
         } else {
-          message.error(res.msg);
+          ElMessage.error(res.msg);
         }
       });
     } finally {
@@ -85,10 +85,10 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       if (userInfo?.realName) {
-        notification.success({
-          description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
-          duration: 3,
-          message: $t('authentication.loginSuccess'),
+        ElNotification.success({
+          title: $t('authentication.loginSuccess'),
+          message: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+          duration: 3000,
         });
       }
     }

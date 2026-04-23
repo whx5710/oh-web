@@ -8,7 +8,7 @@ import type { SystemRoleApi } from '#/api/system/role';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 
-import { Button, message } from 'ant-design-vue';
+import { ElButton, ElMessage } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { deleteRole, getRolePage } from '#/api/system/role';
@@ -92,19 +92,19 @@ function onViewUser(row: SystemRoleApi.SystemRole) {
 }
 function onDelete(row: SystemRoleApi.SystemRole) {
   if (row.isSystem === 1) {
-    message.warning({
+    ElMessage.warning({
       content: '内置角色不能删除',
     });
     return;
   }
-  const hideLoading = message.loading({
+  const hideLoading = ElMessage.loading({
     content: $t('ui.actionMessage.deleting', [row.name]),
     duration: 0,
     key: 'action_process_msg',
   });
   deleteRole(row.id)
     .then(() => {
-      message.success({
+      ElMessage.success({
         content: $t('ui.actionMessage.deleteSuccess', [row.name]),
         key: 'action_process_msg',
       });
@@ -132,10 +132,10 @@ function onCreate() {
         {{ row }}
       </template>
       <template #toolbar-tools>
-        <Button type="primary" @click="onCreate">
+        <ElButton type="primary" @click="onCreate">
           <Plus class="size-5" />
           {{ $t('ui.actionTitle.create', [$t('system.role.name')]) }}
-        </Button>
+        </ElButton>
       </template>
     </Grid>
   </Page>
